@@ -1,4 +1,5 @@
 buildscript {
+  ext.kotlin_version = '1.2.61'
   repositories {
     jcenter()
     google()
@@ -7,6 +8,7 @@ buildscript {
   dependencies {
     classpath 'com.android.tools.build:gradle:3.2.0'
     classpath 'com.github.ben-manes:gradle-versions-plugin:0.15.0'
+    classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
   }
 }
 
@@ -14,9 +16,13 @@ repositories {
   jcenter()
   google()
   maven { url 'https://oss.jfrog.org/libs-snapshot' }
+  maven { url 'https://jitpack.io' }
 }
 
 apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
 apply plugin: 'com.github.ben-manes.versions'
 
 // Use `com.nerdery.umbrella.darkskyapikey` in gradle.properties or as a command line
@@ -79,6 +85,7 @@ dependencies {
   implementation "com.android.support:recyclerview-v7:$SUPPORT_LIB_VERSION"
   implementation "com.android.support:design:$SUPPORT_LIB_VERSION"
   implementation "com.android.support:cardview-v7:$SUPPORT_LIB_VERSION"
+  implementation 'com.android.support.constraint:constraint-layout:1.1.3'
 
   implementation "com.squareup.okhttp3:okhttp:$OKHTTP_VERSION"
   implementation "com.squareup.okhttp3:logging-interceptor:$OKHTTP_VERSION"
@@ -96,7 +103,14 @@ dependencies {
   implementation "com.jakewharton.timber:timber:4.7.1"
   implementation "com.jakewharton.picasso:picasso2-okhttp3-downloader:1.1.0"
 
+  implementation 'org.greenrobot:eventbus:3.1.1'
+
+  implementation 'com.google.dagger:dagger:2.14.1'
+  kapt 'com.google.dagger:dagger-compiler:2.13'
+
   implementation "com.f2prateek.rx.preferences:rx-preferences:1.0.2"
+
+  implementation 'com.github.MatteoBattilana:WeatherView:2.0.3'
 
   implementation "android.arch.persistence.room:runtime:$ROOM_VERSION"
   annotationProcessor "android.arch.persistence.room:compiler:$ROOM_VERSION"

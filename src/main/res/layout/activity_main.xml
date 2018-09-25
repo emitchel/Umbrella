@@ -1,16 +1,102 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/main_content"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/primary_2"
+    android:paddingBottom="@dimen/default_margin"
     >
 
+  <TextView
+      android:id="@+id/tv_title"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_centerInParent="true"
+      android:text="@string/app_name"
+      android:textAllCaps="false"
+      android:textColor="@color/white"
+      android:textSize="@dimen/h3"
+      />
+
+  <com.github.matteobattilana.weather.WeatherView
+      android:id="@+id/wv_rain"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      />
+
+  <View
+      android:id="@+id/v_rain_blocker"
+      android:layout_width="10dp"
+      android:layout_height="match_parent"
+      android:layout_alignEnd="@+id/iv_umbrella"
+      android:layout_alignStart="@+id/iv_umbrella"
+      android:layout_alignTop="@+id/iv_umbrella"
+      android:layout_marginTop="23dp"
+      android:background="@color/primary_2"
+      android:visibility="gone"
+      />
+
+  <ImageView
+      android:id="@+id/iv_umbrella"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_above="@+id/tv_title"
+      android:layout_toStartOf="@+id/tv_title"
+      android:contentDescription="@string/app_name"
+      android:src="@drawable/ic_umbrella_black"
+      android:tint="@color/white"
+      android:visibility="gone"
+      />
+
+  <TextView
+      android:id="@+id/tv_owner"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_below="@id/tv_title"
+      android:layout_centerHorizontal="true"
+      android:layout_marginTop="4dp"
+      android:alpha="0"
+      android:text="@string/owner"
+      android:textColor="@color/white"
+      android:textSize="@dimen/h6"
+      />
+
+  <LinearLayout
+      android:id="@+id/ll_continue_button"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_alignParentBottom="true"
+      android:layout_alignParentEnd="true"
+      android:background="?android:attr/selectableItemBackground"
+      android:clickable="true"
+
+      android:focusable="true"
+      android:orientation="horizontal"
+      android:paddingBottom="8dp"
+      android:paddingEnd="@dimen/default_margin"
+      android:paddingStart="@dimen/default_margin"
+      android:paddingTop="8dp"
+      >
+
     <TextView
-        android:text="Hello World!"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
+        android:text="@string/cont"
+        android:textColor="@color/white"
+        android:textSize="@dimen/h5"
         />
 
-</FrameLayout>
+    <ImageView
+        android:id="@+id/iv_arrow_right"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:contentDescription="@string/cont"
+        android:src="@drawable/ic_arrow_right"
+        />
+
+  </LinearLayout>
+
+</RelativeLayout>

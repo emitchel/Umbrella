@@ -1,3 +1,5 @@
 <resources>
+  <string name="owner">Elliot Mitchell</string>
   <string name="app_name">Umbrella</string>
+  <string name="cont">Continue</string>
 </resources>

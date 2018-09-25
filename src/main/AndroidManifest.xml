@@ -1,26 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.nerdery.umbrella" >
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.nerdery.umbrella">
 
-    <uses-permission android:name="android.permission.INTERNET" />
+  <uses-permission android:name="android.permission.INTERNET"/>
 
-    <application
-        android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+  <application
+      android:name=".UmbrellaApp"
+      android:allowBackup="true"
+      android:icon="@mipmap/ic_launcher"
+      android:label="@string/app_name"
+      android:theme="@style/Theme.Umbrella"
+      tools:ignore="GoogleAppIndexingWarning">
+    <activity
+        android:name=".ui.activities.SplashActivity"
         android:label="@string/app_name"
-        android:theme="@style/Theme.Umbrella"
-        android:name=".UmbrellaApp"
+        android:theme="@style/Theme.Umbrella.FullScreen"
         >
-        <activity
-            android:name=".ui.activities.SplashActivity"
-            android:label="@string/app_name"
-            >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+      <intent-filter>
+        <action android:name="android.intent.action.MAIN"/>
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-    </application>
+        <category android:name="android.intent.category.LAUNCHER"/>
+      </intent-filter>
+    </activity>
+  </application>
 
 </manifest>

@@ -1,4 +1,17 @@
 <resources>
-    <dimen name="default_margin">16dp</dimen>
-    <dimen name="default_padding">16dp</dimen>
+  <!-- https://material.io/design/typography/the-type-system.html#type-scale -->
+  <dimen name="h1">96sp</dimen>
+  <dimen name="h2">60sp</dimen>
+  <dimen name="h3">48sp</dimen>
+  <dimen name="h4">34sp</dimen>
+  <dimen name="h5">24sp</dimen>
+  <dimen name="h6">20sp</dimen>
+  <dimen name="subtitle_1">16sp</dimen>
+  <dimen name="subtitle_2">14sp</dimen>
+  <dimen name="body_1">16sp</dimen>
+  <dimen name="body_2">14sp</dimen>
+  <dimen name="button">14sp</dimen>
+  <dimen name="caption">14sp</dimen>
+  <dimen name="default_margin">16dp</dimen>
+  <dimen name="default_padding">16dp</dimen>
 </resources>
