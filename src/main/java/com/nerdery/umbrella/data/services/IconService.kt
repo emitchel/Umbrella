@@ -9,6 +9,15 @@ package com.nerdery.umbrella.data.services
  */
 class IconService {
 
+  enum class IconType(val value: String) {
+    CLEAR("Clear"),
+    Overcast("Overcast");
+
+    override fun toString(): String {
+      return value
+    }
+  }
+
   /**
    * Get the URL to an icon suitable for use as a replacement for the icons given by Weather Underground
    * @param icon The name of the icon provided by Weather Underground (e.g. "clear").
@@ -16,7 +25,7 @@ class IconService {
    * @return A URL to an icon
    */
   fun getUrlForIcon(
-    icon: String,
+    icon: IconType,
     highlighted: Boolean
   ): String {
     val highlightParam = if (highlighted) "-selected" else ""
