@@ -1,16 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <color name="accent">#ff2196f3</color>
-    <color name="status_bar">#ff1976d2</color>
-    <color name="content_background">#fffafafa</color>
-    <color name="text_color_primary">#dd000000</color>
-    <color name="text_color_secondary">#89000000</color>
+  <color name="primary">#ff2196f3</color>
+  <!-- decent color pallet from https://coolors.co/2196f3-1976d2-2274a5-e7eb90-fadf63 -->
+  <color name="primary_2">#2274A5</color>
+  <color name="accent">#E7EB90</color>
+  <color name="accent_2">#FADF63</color>
+  <color name="status_bar">#ff1976d2</color>
+  <color name="content_background">#fffafafa</color>
+  <color name="text_color_primary">#dd000000</color>
+  <color name="text_color_secondary">#89000000</color>
 
-    <!-- App-wide colors to indicate whether the temperature is warm or cool -->
-    <color name="weather_warm">#ff9800</color>
-    <color name="weather_cool">#03a9f4</color>
+  <!-- App-wide colors to indicate whether the temperature is warm or cool -->
+  <color name="weather_warm">#ff9800</color>
+  <color name="weather_cool">#03a9f4</color>
 
-    <!-- Forecast card colors -->
-    <color name="forecast_card_divider">#ccc</color>
+  <!-- Forecast card colors -->
+  <color name="forecast_card_divider">#ccc</color>
+
+  <color name="white">#ffffff</color>
 </resources>

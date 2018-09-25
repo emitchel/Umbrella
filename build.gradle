@@ -1,8 +1,8 @@
 buildscript {
   repositories {
-      jcenter()
-      google()
-      maven { url 'https://oss.jfrog.org/libs-snapshot' }
+    jcenter()
+    google()
+    maven { url 'https://oss.jfrog.org/libs-snapshot' }
   }
   dependencies {
     classpath 'com.android.tools.build:gradle:3.2.0'
@@ -10,10 +10,10 @@ buildscript {
   }
 }
 
-repositories{
-    jcenter()
-    google()
-    maven { url 'https://oss.jfrog.org/libs-snapshot' }
+repositories {
+  jcenter()
+  google()
+  maven { url 'https://oss.jfrog.org/libs-snapshot' }
 }
 
 apply plugin: 'com.android.application'
@@ -22,9 +22,9 @@ apply plugin: 'com.github.ben-manes.versions'
 // Use `com.nerdery.umbrella.darkskyapikey` in gradle.properties or as a command line
 // parameter or `DARK_SKY_API_KEY` as a System Environment variable to provide dark
 // sky api key to this project
-ext.darkSkyApiKey = project.hasProperty('com.nerdery.umbrella.darkskyapikey')?
-    project.getProperty('com.nerdery.umbrella.darkskyapikey'):
-    System.getenv('DARK_SKY_API_KEY')?:''
+ext.darkSkyApiKey = project.hasProperty('com.nerdery.umbrella.darkskyapikey') ?
+    project.getProperty('com.nerdery.umbrella.darkskyapikey') :
+    System.getenv('DARK_SKY_API_KEY') ?: ''
 
 android {
   compileSdkVersion 27
@@ -52,8 +52,8 @@ android {
   }
 
   buildTypes {
-    debug{
-      applicationIdSuffix'.debug'
+    debug {
+      applicationIdSuffix '.debug'
     }
   }
 
@@ -64,11 +64,12 @@ android {
 }
 
 ext {
-    SUPPORT_LIB_VERSION = "27.1.1"
-    RETROFIT_VERSION = "2.3.0"
-    OKHTTP_VERSION = "3.9.0"
-    ROOM_VERSION = "1.1.1"
-    FACEBOOK_VERSION = "1.5.0"
+  SUPPORT_LIB_VERSION = "27.1.1"
+  RETROFIT_VERSION = "2.3.0"
+  OKHTTP_VERSION = "3.9.0"
+  ROOM_VERSION = "1.1.1"
+  PICASSO_VERSION = "2.71828"
+  FACEBOOK_VERSION = "1.5.0"
 }
 
 dependencies {
@@ -81,7 +82,7 @@ dependencies {
 
   implementation "com.squareup.okhttp3:okhttp:$OKHTTP_VERSION"
   implementation "com.squareup.okhttp3:logging-interceptor:$OKHTTP_VERSION"
-  implementation "com.squareup.picasso:picasso:2.71828"
+  implementation "com.squareup.picasso:picasso:$PICASSO_VERSION"
   implementation "com.squareup.retrofit2:retrofit:$RETROFIT_VERSION"
   implementation "com.squareup.retrofit2:converter-moshi:$RETROFIT_VERSION"
   implementation "com.squareup.retrofit2:converter-gson:$RETROFIT_VERSION"
