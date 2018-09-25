@@ -1,0 +1,106 @@
+buildscript {
+  repositories {
+      jcenter()
+      google()
+      maven { url 'https://oss.jfrog.org/libs-snapshot' }
+  }
+  dependencies {
+    classpath 'com.android.tools.build:gradle:3.2.0'
+    classpath 'com.github.ben-manes:gradle-versions-plugin:0.15.0'
+  }
+}
+
+repositories{
+    jcenter()
+    google()
+    maven { url 'https://oss.jfrog.org/libs-snapshot' }
+}
+
+apply plugin: 'com.android.application'
+apply plugin: 'com.github.ben-manes.versions'
+
+// Use `com.nerdery.umbrella.darkskyapikey` in gradle.properties or as a command line
+// parameter or `DARK_SKY_API_KEY` as a System Environment variable to provide dark
+// sky api key to this project
+ext.darkSkyApiKey = project.hasProperty('com.nerdery.umbrella.darkskyapikey')?
+    project.getProperty('com.nerdery.umbrella.darkskyapikey'):
+    System.getenv('DARK_SKY_API_KEY')?:''
+
+android {
+  compileSdkVersion 27
+  buildToolsVersion '28.0.2'
+
+  signingConfigs {
+    umbrella {
+      storeFile file('debug.keystore')
+      storePassword 'android'
+      keyAlias 'androiddebugkey'
+      keyPassword 'android'
+    }
+  }
+
+  defaultConfig {
+    applicationId "com.nerdery.umbrella"
+    minSdkVersion 19
+    targetSdkVersion 27
+    versionCode 1
+    versionName '1.0'
+
+    buildConfigField "String", "API_KEY", "\"$project.darkSkyApiKey\""
+
+    signingConfig signingConfigs.umbrella
+  }
+
+  buildTypes {
+    debug{
+      applicationIdSuffix'.debug'
+    }
+  }
+
+  compileOptions {
+    sourceCompatibility JavaVersion.VERSION_1_8
+    targetCompatibility JavaVersion.VERSION_1_8
+  }
+}
+
+ext {
+    SUPPORT_LIB_VERSION = "27.1.1"
+    RETROFIT_VERSION = "2.3.0"
+    OKHTTP_VERSION = "3.9.0"
+    ROOM_VERSION = "1.1.1"
+    FACEBOOK_VERSION = "1.5.0"
+}
+
+dependencies {
+  implementation "com.android.support:support-v4:$SUPPORT_LIB_VERSION"
+  implementation "com.android.support:support-annotations:$SUPPORT_LIB_VERSION"
+  implementation "com.android.support:appcompat-v7:$SUPPORT_LIB_VERSION"
+  implementation "com.android.support:recyclerview-v7:$SUPPORT_LIB_VERSION"
+  implementation "com.android.support:design:$SUPPORT_LIB_VERSION"
+  implementation "com.android.support:cardview-v7:$SUPPORT_LIB_VERSION"
+
+  implementation "com.squareup.okhttp3:okhttp:$OKHTTP_VERSION"
+  implementation "com.squareup.okhttp3:logging-interceptor:$OKHTTP_VERSION"
+  implementation "com.squareup.picasso:picasso:2.71828"
+  implementation "com.squareup.retrofit2:retrofit:$RETROFIT_VERSION"
+  implementation "com.squareup.retrofit2:converter-moshi:$RETROFIT_VERSION"
+  implementation "com.squareup.retrofit2:converter-gson:$RETROFIT_VERSION"
+  implementation "com.squareup.retrofit2:adapter-rxjava2:$RETROFIT_VERSION"
+
+  implementation "io.reactivex.rxjava2:rxjava:2.2.0"
+  implementation "io.reactivex.rxjava2:rxandroid:2.1.0"
+
+  implementation "com.jakewharton.byteunits:byteunits:0.9.1"
+  implementation "com.jakewharton.threetenabp:threetenabp:1.1.0"
+  implementation "com.jakewharton.timber:timber:4.7.1"
+  implementation "com.jakewharton.picasso:picasso2-okhttp3-downloader:1.1.0"
+
+  implementation "com.f2prateek.rx.preferences:rx-preferences:1.0.2"
+
+  implementation "android.arch.persistence.room:runtime:$ROOM_VERSION"
+  annotationProcessor "android.arch.persistence.room:compiler:$ROOM_VERSION"
+
+  debugImplementation "com.facebook.stetho:stetho:$FACEBOOK_VERSION"
+  debugImplementation "com.facebook.stetho:stetho-okhttp3:$FACEBOOK_VERSION"
+  debugImplementation "com.facebook.stetho:stetho-timber:$FACEBOOK_VERSION@aar"
+}
