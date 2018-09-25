@@ -44,6 +44,11 @@ class SplashActivity : AppCompatActivity() {
       animateUmbrella()
       animateOwner()
     }, TimeUnit.SECONDS.toMillis(2))
+
+    //TODO: if first run, show continue button, otherwise continue to homepage
+    Handler().postDelayed({
+      //TODO: show continue button and animate arrow
+    }, TimeUnit.SECONDS.toMillis(3))
   }
 
   private fun animateOwner() {

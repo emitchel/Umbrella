@@ -3,7 +3,7 @@ package com.nerdery.umbrella.data.model;
 import com.google.gson.annotations.SerializedName;
 
 /**
- * Response from DarkSky weather requests in {@link com.nerdery.umbrella.data.api.WeatherService}
+ * Response from DarkSky weather requests in {@link com.nerdery.umbrella.data.api.WeatherApi}
  */
 public class WeatherResponse {
 

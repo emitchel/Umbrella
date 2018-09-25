@@ -1,4 +1,4 @@
-package com.nerdery.umbrella.data.api
+package com.nerdery.umbrella.data.services
 
 /**
  * API for getting custom Nerdery icon URLs for weather conditions
@@ -7,7 +7,7 @@ package com.nerdery.umbrella.data.api
  *
  * @author bherbst
  */
-class IconApi {
+class IconService {
 
   /**
    * Get the URL to an icon suitable for use as a replacement for the icons given by Weather Underground

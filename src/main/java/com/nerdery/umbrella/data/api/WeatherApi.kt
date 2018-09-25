@@ -10,7 +10,7 @@ import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
 
-interface WeatherService {
+interface WeatherApi {
 
   @GET("/forecast/" + BuildConfig.API_KEY + "/{latitude},{longitude}")
   fun getWeather(
@@ -18,12 +18,5 @@ interface WeatherService {
     @Path("longitude") longitude: Double,
     @Query("units") units: TempUnit
   ): Single<WeatherResponse>
-
-  @GET("/forecast/" + BuildConfig.API_KEY + "/{latitude},{longitude}")
-  fun getWeatherCall(
-    @Path("latitude") latitude: Double,
-    @Path("longitude") longitude: Double,
-    @Query("units") units: TempUnit
-  ): Call<WeatherResponse>
 
 }

@@ -5,8 +5,7 @@ import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.jakewharton.byteunits.DecimalByteUnit.MEGABYTES
 import com.jakewharton.picasso.OkHttp3Downloader
-import com.nerdery.umbrella.data.api.IconApi
-import com.nerdery.umbrella.data.api.WeatherService
+import com.nerdery.umbrella.data.api.WeatherApi
 import com.nerdery.umbrella.data.serializers.DateDeserializer
 import com.squareup.picasso.Picasso
 import okhttp3.Cache
@@ -19,7 +18,7 @@ import java.io.File
 import java.util.Date
 
 /**
- * Provides [Picasso], [WeatherService], and [IconApi]
+ * Provides [Picasso], [WeatherApi], and [IconService]
  * that are all ready setup and ready to use.
  */
 class ApiServicesProvider
@@ -31,18 +30,18 @@ class ApiServicesProvider
 (application: Application) {
 
   /**
-   * @return ready to use [IconApi]
+   * @return ready to use [IconService]
    */
-  val iconApi: IconApi
+  val iconService: IconService
   /**
-   * @return an instance of the [WeatherService] service that is ready to use.
+   * @return an instance of the [WeatherApi] service that is ready to use.
    */
-  val weatherService: WeatherService
+  val weatherApi: WeatherApi
   val picasso: Picasso
   val gson: Gson
 
   init {
-    iconApi = IconApi()
+    iconService = IconService()
 
     val gsonBuilder = GsonBuilder()
     gsonBuilder.registerTypeAdapter(Date::class.java, DateDeserializer())
@@ -50,8 +49,8 @@ class ApiServicesProvider
 
     val client = createOkHttpClient(application)
 
-    weatherService =
-        provideDarkSkyRetrofit(client, gson).create(WeatherService::class.java)
+    weatherApi =
+        provideDarkSkyRetrofit(client, gson).create(WeatherApi::class.java)
 
     picasso = Picasso.Builder(application)
         .downloader(OkHttp3Downloader(client))

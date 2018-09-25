@@ -3,7 +3,7 @@ package com.nerdery.umbrella.data.model;
 import com.google.gson.annotations.SerializedName;
 
 /**
- * Temperature unit to be used in requests for {@link com.nerdery.umbrella.data.api.WeatherService}
+ * Temperature unit to be used in requests for {@link com.nerdery.umbrella.data.api.WeatherApi}
  */
 public enum TempUnit {
     @SerializedName("si")
