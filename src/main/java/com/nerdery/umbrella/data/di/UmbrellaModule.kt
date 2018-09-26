@@ -8,10 +8,13 @@ import com.nerdery.umbrella.data.api.WeatherApi
 import com.nerdery.umbrella.data.database.UmbrellaDatabase
 import com.nerdery.umbrella.data.services.ApiServicesProvider
 import com.nerdery.umbrella.data.services.IIconService
+import com.nerdery.umbrella.data.services.ILocationService
 import com.nerdery.umbrella.data.services.IZipCodeService
+import com.nerdery.umbrella.data.services.impl.LocationService
 import com.squareup.picasso.Picasso
 import dagger.Module
 import dagger.Provides
+import org.greenrobot.eventbus.EventBus
 
 @Module
 class UmbrellaModule(private val application: UmbrellaApp) {
@@ -20,6 +23,12 @@ class UmbrellaModule(private val application: UmbrellaApp) {
   @UmbrellaScope
   fun providesDatabase(): UmbrellaDatabase {
     return UmbrellaDatabase.getAppDatabase(application)
+  }
+
+  @Provides
+  @UmbrellaScope
+  fun providesEventBus(): EventBus {
+    return EventBus.getDefault() //let eb do it's singleton work
   }
 
   @Provides
@@ -66,6 +75,12 @@ class UmbrellaModule(private val application: UmbrellaApp) {
   @UmbrellaScope
   fun providesWeatherService(apiServicesProvider: ApiServicesProvider): WeatherApi {
     return apiServicesProvider.weatherApi
+  }
+
+  @Provides
+  @UmbrellaScope
+  fun providesLocationService(eventBus: EventBus): ILocationService {
+    return LocationService(application, eventBus)
   }
 
 }
