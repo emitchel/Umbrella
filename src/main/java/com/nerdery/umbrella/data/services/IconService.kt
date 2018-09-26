@@ -1,5 +1,7 @@
 package com.nerdery.umbrella.data.services
 
+import com.nerdery.umbrella.data.services.IIconService.IconType
+
 /**
  * API for getting custom Nerdery icon URLs for weather conditions
  *
@@ -7,16 +9,7 @@ package com.nerdery.umbrella.data.services
  *
  * @author bherbst
  */
-class IconService {
-
-  enum class IconType(val value: String) {
-    CLEAR("Clear"),
-    Overcast("Overcast");
-
-    override fun toString(): String {
-      return value
-    }
-  }
+class IconService : IIconService {
 
   /**
    * Get the URL to an icon suitable for use as a replacement for the icons given by Weather Underground
@@ -24,7 +17,7 @@ class IconService {
    * @param highlighted True to get the highlighted version, false to get the outline version
    * @return A URL to an icon
    */
-  fun getUrlForIcon(
+  override fun getUrlForIcon(
     icon: IconType,
     highlighted: Boolean
   ): String {
