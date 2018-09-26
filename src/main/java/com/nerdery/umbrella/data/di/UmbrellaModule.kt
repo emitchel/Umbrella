@@ -1,12 +1,13 @@
 package com.nerdery.umbrella.data.di
 
+import android.preference.PreferenceManager
+import com.f2prateek.rx.preferences.RxSharedPreferences
 import com.google.gson.Gson
 import com.nerdery.umbrella.UmbrellaApp
 import com.nerdery.umbrella.data.api.WeatherApi
 import com.nerdery.umbrella.data.services.ApiServicesProvider
 import com.nerdery.umbrella.data.services.IIconService
 import com.nerdery.umbrella.data.services.IZipCodeService
-import com.nerdery.umbrella.data.services.impl.IconService
 import com.squareup.picasso.Picasso
 import dagger.Module
 import dagger.Provides
@@ -20,6 +21,7 @@ class UmbrellaModule(val application: UmbrellaApp) {
     //Yes this is redundant for dagger's sake!
     return ApiServicesProvider(application)
   }
+
   @Provides
   @UmbrellaScope
   fun providesPicasso(apiServicesProvider: ApiServicesProvider): Picasso {
@@ -34,7 +36,14 @@ class UmbrellaModule(val application: UmbrellaApp) {
 
   @Provides
   @UmbrellaScope
-  fun providesZipCodeService(apiServicesProvider: ApiServicesProvider):IZipCodeService {
+  fun providesSharedPreferences(application: UmbrellaApp): RxSharedPreferences {
+    val preferences = PreferenceManager.getDefaultSharedPreferences(application)
+    return RxSharedPreferences.create(preferences)
+  }
+
+  @Provides
+  @UmbrellaScope
+  fun providesZipCodeService(apiServicesProvider: ApiServicesProvider): IZipCodeService {
     return apiServicesProvider.zipCodeService
   }
 
@@ -43,7 +52,6 @@ class UmbrellaModule(val application: UmbrellaApp) {
   fun providesIconService(apiServicesProvider: ApiServicesProvider): IIconService {
     return apiServicesProvider.iconService
   }
-
 
   @Provides
   @UmbrellaScope

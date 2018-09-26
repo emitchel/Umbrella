@@ -2,4 +2,6 @@
   <string name="owner">Elliot Mitchell</string>
   <string name="app_name">Umbrella</string>
   <string name="cont">Continue</string>
+  <string name="fahrenheit">Fahrenheit</string>
+  <string name="celsius">Celsius</string>
 </resources>
