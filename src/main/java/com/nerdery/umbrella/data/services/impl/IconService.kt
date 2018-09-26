@@ -1,5 +1,6 @@
-package com.nerdery.umbrella.data.services
+package com.nerdery.umbrella.data.services.impl
 
+import com.nerdery.umbrella.data.services.IIconService
 import com.nerdery.umbrella.data.services.IIconService.IconType
 
 /**

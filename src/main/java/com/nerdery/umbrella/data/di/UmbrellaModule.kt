@@ -4,7 +4,9 @@ import com.google.gson.Gson
 import com.nerdery.umbrella.UmbrellaApp
 import com.nerdery.umbrella.data.api.WeatherApi
 import com.nerdery.umbrella.data.services.ApiServicesProvider
-import com.nerdery.umbrella.data.services.IconService
+import com.nerdery.umbrella.data.services.IIconService
+import com.nerdery.umbrella.data.services.IZipCodeService
+import com.nerdery.umbrella.data.services.impl.IconService
 import com.squareup.picasso.Picasso
 import dagger.Module
 import dagger.Provides
@@ -18,13 +20,6 @@ class UmbrellaModule(val application: UmbrellaApp) {
     //Yes this is redundant for dagger's sake!
     return ApiServicesProvider(application)
   }
-
-  @Provides
-  @UmbrellaScope
-  fun providesIconApi(apiServicesProvider: ApiServicesProvider): IconService {
-    return apiServicesProvider.iconService
-  }
-
   @Provides
   @UmbrellaScope
   fun providesPicasso(apiServicesProvider: ApiServicesProvider): Picasso {
@@ -33,14 +28,27 @@ class UmbrellaModule(val application: UmbrellaApp) {
 
   @Provides
   @UmbrellaScope
-  fun providesWeatherService(apiServicesProvider: ApiServicesProvider): WeatherApi {
-    return apiServicesProvider.weatherApi
+  fun providesGson(apiServicesProvider: ApiServicesProvider): Gson {
+    return apiServicesProvider.gson
   }
 
   @Provides
   @UmbrellaScope
-  fun providesGson(apiServicesProvider: ApiServicesProvider): Gson {
-    return apiServicesProvider.gson
+  fun providesZipCodeService(apiServicesProvider: ApiServicesProvider):IZipCodeService {
+    return apiServicesProvider.zipCodeService
+  }
+
+  @Provides
+  @UmbrellaScope
+  fun providesIconService(apiServicesProvider: ApiServicesProvider): IIconService {
+    return apiServicesProvider.iconService
+  }
+
+
+  @Provides
+  @UmbrellaScope
+  fun providesWeatherService(apiServicesProvider: ApiServicesProvider): WeatherApi {
+    return apiServicesProvider.weatherApi
   }
 
 }

@@ -7,6 +7,8 @@ import com.jakewharton.byteunits.DecimalByteUnit.MEGABYTES
 import com.jakewharton.picasso.OkHttp3Downloader
 import com.nerdery.umbrella.data.api.WeatherApi
 import com.nerdery.umbrella.data.serializers.DateDeserializer
+import com.nerdery.umbrella.data.services.impl.IconService
+import com.nerdery.umbrella.data.services.impl.ZipCodeService
 import com.squareup.picasso.Picasso
 import okhttp3.Cache
 import okhttp3.OkHttpClient
@@ -18,7 +20,7 @@ import java.io.File
 import java.util.Date
 
 /**
- * Provides [Picasso], [WeatherApi], and [IconService]
+ * Provides [Picasso], [Gson], [ZipCodeService], [WeatherApi], and [IconService]
  * that are all ready setup and ready to use.
  */
 class ApiServicesProvider
@@ -37,10 +39,16 @@ class ApiServicesProvider
    * @return an instance of the [WeatherApi] service that is ready to use.
    */
   val weatherApi: WeatherApi
+  /**
+   * @return an instance of [ZipCodeService]
+   */
+  val zipCodeService: ZipCodeService
   val picasso: Picasso
   val gson: Gson
 
   init {
+    zipCodeService = ZipCodeService()
+
     iconService = IconService()
 
     val gsonBuilder = GsonBuilder()
