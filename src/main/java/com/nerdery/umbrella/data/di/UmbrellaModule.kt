@@ -14,19 +14,21 @@ import dagger.Module
 import dagger.Provides
 
 @Module
-class UmbrellaModule(val application: UmbrellaApp) {
+class UmbrellaModule(private val application: UmbrellaApp) {
 
   @Provides
   @UmbrellaScope
-  fun providesDatabase(application: UmbrellaApp): UmbrellaDatabase {
+  fun providesDatabase(): UmbrellaDatabase {
     return UmbrellaDatabase.getAppDatabase(application)
   }
 
   @Provides
   @UmbrellaScope
-  fun providesApiServices(application: UmbrellaApp, database: UmbrellaDatabase): ApiServicesProvider {
+  fun providesApiServices(
+    database: UmbrellaDatabase
+  ): ApiServicesProvider {
     //Yes this is redundant for dagger's sake!
-    return ApiServicesProvider(application)
+    return ApiServicesProvider(application, database)
   }
 
   @Provides
@@ -43,7 +45,7 @@ class UmbrellaModule(val application: UmbrellaApp) {
 
   @Provides
   @UmbrellaScope
-  fun providesSharedPreferences(application: UmbrellaApp): RxSharedPreferences {
+  fun providesSharedPreferences(): RxSharedPreferences {
     val preferences = PreferenceManager.getDefaultSharedPreferences(application)
     return RxSharedPreferences.create(preferences)
   }

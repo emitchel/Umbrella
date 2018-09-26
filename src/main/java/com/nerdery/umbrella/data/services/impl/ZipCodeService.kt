@@ -9,9 +9,10 @@ import com.nerdery.umbrella.data.services.IZipCodeService
 import com.nerdery.umbrella.data.services.IZipCodeService.ZipLocationListener
 import kotlinx.coroutines.experimental.async
 import timber.log.Timber
-import java.io.ByteArrayOutputStream
+import java.io.BufferedReader
 import java.io.IOException
 import java.io.InputStream
+import java.io.InputStreamReader
 
 /**
  * This Service is used to lookup location details of a specific US ZIP code
@@ -75,20 +76,26 @@ class ZipCodeService(
   }
 
   private fun readJsonFile(inputStream: InputStream): String? {
-    val outputStream = ByteArrayOutputStream()
-    val buffer = ByteArray(1024)
-    var length: Int
+    var ret = ""
     try {
-      length = inputStream.read(buffer)
-      while (length != -1) {
-        outputStream.write(buffer, 0, length)
+      val inputStreamReader = InputStreamReader(inputStream)
+      val bufferedReader = BufferedReader(inputStreamReader)
+      val stringBuilder = StringBuilder()
+
+      var receiveString = bufferedReader.readLine()
+      while ((receiveString) != null) {
+        stringBuilder.append(receiveString)
+        receiveString = bufferedReader.readLine()
       }
+
+      inputStream.close()
+      ret = stringBuilder.toString()
     } catch (e: IOException) {
-      e.printStackTrace()
+      Timber.e("Error loading json zip code, %s", e.printStackTrace());
       return null
     }
 
-    return outputStream.toString()
+    return ret
   }
 
 }
