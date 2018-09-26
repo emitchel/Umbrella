@@ -6,6 +6,7 @@ import com.google.gson.GsonBuilder
 import com.jakewharton.byteunits.DecimalByteUnit.MEGABYTES
 import com.jakewharton.picasso.OkHttp3Downloader
 import com.nerdery.umbrella.data.api.WeatherApi
+import com.nerdery.umbrella.data.database.UmbrellaDatabase
 import com.nerdery.umbrella.data.serializers.DateDeserializer
 import com.nerdery.umbrella.data.services.impl.IconService
 import com.nerdery.umbrella.data.services.impl.ZipCodeService
@@ -29,7 +30,10 @@ class ApiServicesProvider
  *
  * @param application application context used for creating network caches.
  */
-(application: Application) {
+(
+  application: Application,
+  database: UmbrellaDatabase
+) {
 
   /**
    * @return ready to use [IconService]
@@ -47,13 +51,13 @@ class ApiServicesProvider
   val gson: Gson
 
   init {
-    zipCodeService = ZipCodeService()
-
-    iconService = IconService()
-
     val gsonBuilder = GsonBuilder()
     gsonBuilder.registerTypeAdapter(Date::class.java, DateDeserializer())
     gson = gsonBuilder.create()
+
+    zipCodeService = ZipCodeService(database, gson)
+
+    iconService = IconService()
 
     val client = createOkHttpClient(application)
 

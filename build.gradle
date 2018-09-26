@@ -112,6 +112,9 @@ dependencies {
 
   implementation 'com.github.MatteoBattilana:WeatherView:2.0.3'
 
+  implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:0.26.1"
+  implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:0.22.5"
+
   implementation "android.arch.persistence.room:runtime:$ROOM_VERSION"
   annotationProcessor "android.arch.persistence.room:compiler:$ROOM_VERSION"
 

@@ -9,8 +9,9 @@ interface IZipCodeService {
     fun onLocationNotFound()
   }
 
+  fun initDatabase(context: Context)
+
   fun getLatLongByZip(
-    context: Context,
     zipCode: String,
     listener: ZipLocationListener
   )

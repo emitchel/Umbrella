@@ -1,21 +1,34 @@
 package com.nerdery.umbrella.data.model
 
+import android.arch.persistence.room.Entity
+import android.arch.persistence.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
 
+@Entity
 class ZipLocation {
+  constructor( //for Room's satisfaction
+    zipCode: Long,
+    city: String?,
+    state: String?,
+    latitude: Double,
+    longitude: Double
+  ) {
+    this.zipCode = zipCode
+    this.city = city
+    this.state = state
+    this.latitude = latitude
+    this.longitude = longitude
+  }
+
+  @PrimaryKey
   @SerializedName("z")
   var zipCode: Long = 0
-    internal set
   @SerializedName("c")
   var city: String? = null
-    internal set
   @SerializedName("s")
   var state: String? = null
-    internal set
   @SerializedName("la")
   var latitude: Double = 0.toDouble()
-    internal set
   @SerializedName("lo")
   var longitude: Double = 0.toDouble()
-    internal set
 }

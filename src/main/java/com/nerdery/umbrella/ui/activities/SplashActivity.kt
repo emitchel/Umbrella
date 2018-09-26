@@ -8,11 +8,14 @@ import android.view.animation.AnimationUtils
 import android.view.animation.DecelerateInterpolator
 import com.github.matteobattilana.weather.PrecipType.RAIN
 import com.nerdery.umbrella.R
+import com.nerdery.umbrella.UmbrellaApp
+import com.nerdery.umbrella.data.services.IZipCodeService
 import kotlinx.android.synthetic.main.activity_main.iv_umbrella
 import kotlinx.android.synthetic.main.activity_main.tv_owner
 import kotlinx.android.synthetic.main.activity_main.v_rain_blocker
 import kotlinx.android.synthetic.main.activity_main.wv_rain
 import java.util.concurrent.TimeUnit
+import javax.inject.Inject
 
 class SplashActivity : AppCompatActivity() {
   companion object {
@@ -21,8 +24,11 @@ class SplashActivity : AppCompatActivity() {
     const val ANIMATION_SPEED_MILLIS = 2000L
   }
 
+  @Inject lateinit var zipCodeService: IZipCodeService
+
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
+    UmbrellaApp.instance?.component?.inject(this)
     setContentView(R.layout.activity_main)
     setupUI()
   }

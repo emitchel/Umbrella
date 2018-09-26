@@ -7,8 +7,11 @@ import com.nerdery.umbrella.data.di.DaggerUmbrellaComponent
 import com.nerdery.umbrella.data.di.UmbrellaComponent
 
 class UmbrellaApp : Application() {
+
   var component: UmbrellaComponent? = null
-  var instance: UmbrellaApp? = null
+  companion object {
+    var instance: UmbrellaApp? = null
+  }
 
   override fun onCreate() {
     super.onCreate()

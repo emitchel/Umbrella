@@ -2,10 +2,13 @@ package com.nerdery.umbrella.data.services.impl
 
 import android.content.Context
 import com.google.gson.Gson
-import com.nerdery.umbrella.R
+import com.nerdery.umbrella.R.raw
+import com.nerdery.umbrella.data.database.UmbrellaDatabase
 import com.nerdery.umbrella.data.model.ZipLocation
 import com.nerdery.umbrella.data.services.IZipCodeService
 import com.nerdery.umbrella.data.services.IZipCodeService.ZipLocationListener
+import kotlinx.coroutines.experimental.async
+import timber.log.Timber
 import java.io.ByteArrayOutputStream
 import java.io.IOException
 import java.io.InputStream
@@ -13,7 +16,30 @@ import java.io.InputStream
 /**
  * This Service is used to lookup location details of a specific US ZIP code
  */
-class ZipCodeService : IZipCodeService {
+class ZipCodeService(
+  private val database: UmbrellaDatabase,
+  val gson: Gson
+) : IZipCodeService {
+  override fun initDatabase(context: Context) {
+    async {
+      Timber.i("Starting zip code init")
+      val existingZipLocations = database.zipLocationDao()
+          .all
+      if (existingZipLocations == null || existingZipLocations.isEmpty()) {
+        Timber.i("Zip locations didn't exist, loading from json now")
+        val zipLocationsFromJson = getZipLocationsFromJson(context)
+        zipLocationsFromJson?.let {
+          Timber.i("Upserting %d zipLocations", it.size)
+          database.zipLocationDao()
+              .upsert(zipLocationsFromJson)
+        } ?: run {
+          Timber.e("Failed to load zip locations")
+        }
+      } else {
+        Timber.i("Zip locations existed, %d of them", existingZipLocations.size)
+      }
+    }
+  }
 
   /**
    * Request location details of a given zip code
@@ -22,7 +48,6 @@ class ZipCodeService : IZipCodeService {
    * @param listener ZipLocationListener used to listen for successful result or error
    */
   override fun getLatLongByZip(
-    context: Context,
     zipCode: String,
     listener: ZipLocationListener
   ) {
@@ -32,16 +57,21 @@ class ZipCodeService : IZipCodeService {
     } catch (e: NumberFormatException) {
       listener.onLocationNotFound()
     }
-
-    //TODO: onload, move data to
-    val stream = context.resources.openRawResource(R.raw.zipcodes)
-    val jsonString = readJsonFile(stream)
-    val gson = Gson()
-    val locations = gson.fromJson(jsonString, Array<ZipLocation>::class.java)
-    for (location in locations) {
-      if (location.zipCode == zipLong) listener.onLocationFound(location)
+    async {
+      database.zipLocationDao()
+          .all.first { it.zipCode == zipLong }?.let {
+        listener.onLocationFound(it)
+      } ?: run {
+        listener.onLocationNotFound()
+      }
     }
-    listener.onLocationNotFound()
+  }
+
+  private fun getZipLocationsFromJson(context: Context): List<ZipLocation>? {
+    val stream = context.resources.openRawResource(raw.zipcodes)
+    val jsonString = readJsonFile(stream)
+    val locations = gson.fromJson(jsonString, Array<ZipLocation>::class.java)
+    return locations.toList()
   }
 
   private fun readJsonFile(inputStream: InputStream): String? {

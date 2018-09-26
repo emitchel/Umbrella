@@ -5,6 +5,7 @@ import com.f2prateek.rx.preferences.RxSharedPreferences
 import com.google.gson.Gson
 import com.nerdery.umbrella.UmbrellaApp
 import com.nerdery.umbrella.data.api.WeatherApi
+import com.nerdery.umbrella.data.database.UmbrellaDatabase
 import com.nerdery.umbrella.data.services.ApiServicesProvider
 import com.nerdery.umbrella.data.services.IIconService
 import com.nerdery.umbrella.data.services.IZipCodeService
@@ -17,7 +18,13 @@ class UmbrellaModule(val application: UmbrellaApp) {
 
   @Provides
   @UmbrellaScope
-  fun providesApiServices(application: UmbrellaApp): ApiServicesProvider {
+  fun providesDatabase(application: UmbrellaApp): UmbrellaDatabase {
+    return UmbrellaDatabase.getAppDatabase(application)
+  }
+
+  @Provides
+  @UmbrellaScope
+  fun providesApiServices(application: UmbrellaApp, database: UmbrellaDatabase): ApiServicesProvider {
     //Yes this is redundant for dagger's sake!
     return ApiServicesProvider(application)
   }
