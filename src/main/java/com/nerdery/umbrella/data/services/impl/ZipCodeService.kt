@@ -1,18 +1,25 @@
 package com.nerdery.umbrella.data.services.impl
 
 import android.content.Context
+import android.location.Location
 import com.google.gson.Gson
 import com.nerdery.umbrella.R.raw
 import com.nerdery.umbrella.data.database.UmbrellaDatabase
 import com.nerdery.umbrella.data.model.ZipLocation
 import com.nerdery.umbrella.data.services.IZipCodeService
 import com.nerdery.umbrella.data.services.IZipCodeService.ZipLocationListener
+import kotlinx.coroutines.experimental.CoroutineStart
+import kotlinx.coroutines.experimental.CoroutineStart.DEFAULT
+import kotlinx.coroutines.experimental.Dispatchers
+import kotlinx.coroutines.experimental.GlobalScope
 import kotlinx.coroutines.experimental.async
 import timber.log.Timber
 import java.io.BufferedReader
 import java.io.IOException
 import java.io.InputStream
 import java.io.InputStreamReader
+import java.math.RoundingMode
+import java.text.DecimalFormat
 
 /**
  * This Service is used to lookup location details of a specific US ZIP code
@@ -21,8 +28,38 @@ class ZipCodeService(
   private val database: UmbrellaDatabase,
   val gson: Gson
 ) : IZipCodeService {
+
+  companion object {
+    const val PERCENTAGE_DIFFERENCE = .001
+  }
+
+  override fun findAndSetClosestZipToLocation(location: Location?) {
+    location?.let {
+      GlobalScope.async(Dispatchers.Default, CoroutineStart.DEFAULT, null, {
+        val df = DecimalFormat("#.##")
+        df.roundingMode = RoundingMode.CEILING
+        val latMin = df.format(location.latitude * (1 - PERCENTAGE_DIFFERENCE))
+            .toDouble()
+        val latMax = df.format(location.latitude * (1 + PERCENTAGE_DIFFERENCE))
+            .toDouble()
+        val longMin = df.format(location.longitude * (1 - PERCENTAGE_DIFFERENCE))
+            .toDouble()
+        val longMax = df.format(location.longitude * (1 + PERCENTAGE_DIFFERENCE))
+            .toDouble()
+        //need to make sure the lower values are considered "min" because sqllite isn't smart enough I guess
+        val acceptableZips = database.zipLocationDao()
+            .getZipLocationInRange(
+                Math.min(latMin, latMax), Math.max(latMin, latMax),
+                Math.min(longMin, longMax), Math.max(longMin, longMax)
+            )
+        Timber.i("Found ${acceptableZips.count()} acceptable zips")
+
+      })
+    }
+  }
+
   override fun initDatabase(context: Context) {
-    async {
+    GlobalScope.async(Dispatchers.Default, DEFAULT, null, {
       Timber.i("Starting zip code init")
       val existingZipLocations = database.zipLocationDao()
           .all
@@ -39,7 +76,7 @@ class ZipCodeService(
       } else {
         Timber.i("Zip locations existed, %d of them", existingZipLocations.size)
       }
-    }
+    })
   }
 
   /**
@@ -58,14 +95,14 @@ class ZipCodeService(
     } catch (e: NumberFormatException) {
       listener.onLocationNotFound()
     }
-    async {
+    GlobalScope.async(Dispatchers.Default, DEFAULT, null, {
       database.zipLocationDao()
           .all.first { it.zipCode == zipLong }?.let {
         listener.onLocationFound(it)
       } ?: run {
         listener.onLocationNotFound()
       }
-    }
+    })
   }
 
   private fun getZipLocationsFromJson(context: Context): List<ZipLocation>? {

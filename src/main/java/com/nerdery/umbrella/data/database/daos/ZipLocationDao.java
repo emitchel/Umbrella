@@ -15,6 +15,13 @@ public abstract class ZipLocationDao implements BaseDao<ZipLocation> {
   @Query("DELETE FROM ZipLocation")
   public abstract void deleteAll();
 
+  @Query("SELECT * FROM ZipLocation WHERE (latitude BETWEEN :latMin AND :latMax) AND (longitude BETWEEN :longMin and :longMax)")
+  public abstract List<ZipLocation> getZipLocationInRange(double latMin, double latMax,
+      double longMin, double longMax);
+
+  @Query("SELECT * FROM ZIPLOCATION WHERE latitude = :latitude and longitude = :longitutde")
+  public abstract List<ZipLocation> getZipByLatLong(double latitude, double longitutde);
+
   @Query("SELECT * FROM ZipLocation WHERE zipCode =:zipCode")
   public abstract ZipLocation getZipLocationByZip(long zipCode);
 

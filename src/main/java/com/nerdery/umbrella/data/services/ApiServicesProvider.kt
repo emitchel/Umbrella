@@ -1,6 +1,7 @@
 package com.nerdery.umbrella.data.services
 
 import android.app.Application
+import android.content.SharedPreferences
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.jakewharton.byteunits.DecimalByteUnit.MEGABYTES
@@ -32,7 +33,8 @@ class ApiServicesProvider
  */
 (
   application: Application,
-  database: UmbrellaDatabase
+  database: UmbrellaDatabase,
+  sharedPreferences: SharedPreferences
 ) {
 
   /**

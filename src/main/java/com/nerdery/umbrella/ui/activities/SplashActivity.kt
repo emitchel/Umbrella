@@ -20,6 +20,7 @@ import com.nerdery.umbrella.UmbrellaApp
 import com.nerdery.umbrella.data.constants.SettingKeys
 import com.nerdery.umbrella.data.constants.ZipCodes
 import com.nerdery.umbrella.data.services.ILocationService
+import com.nerdery.umbrella.data.services.IZipCodeService
 import kotlinx.android.synthetic.main.activity_splash.iv_arrow_right
 import kotlinx.android.synthetic.main.activity_splash.iv_umbrella
 import kotlinx.android.synthetic.main.activity_splash.ll_continue_button
@@ -28,7 +29,6 @@ import kotlinx.android.synthetic.main.activity_splash.v_rain_blocker
 import kotlinx.android.synthetic.main.activity_splash.wv_rain
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
-import org.greenrobot.eventbus.ThreadMode
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -43,6 +43,7 @@ class SplashActivity : AppCompatActivity() {
   @Inject lateinit var sharedPreferences: SharedPreferences
   @Inject lateinit var locationService: ILocationService
   @Inject lateinit var eventBus: EventBus
+  @Inject lateinit var zipCodeService: IZipCodeService
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -69,8 +70,8 @@ class SplashActivity : AppCompatActivity() {
                 sharedPreferences.edit()
                     .putLong(SettingKeys.ZIP, ZipCodes.DEFAULT_ZIPCODE)
                     .apply()
+                //tODO: head off to main activity
               }
-              //TODO: go to activity
             }
 
             override fun onPermissionRationaleShouldBeShown(
@@ -142,8 +143,9 @@ class SplashActivity : AppCompatActivity() {
     v_rain_blocker.startAnimation(animation)
   }
 
-  @Subscribe(threadMode = ThreadMode.MAIN)
+  @Subscribe
   fun onEvent(event: ILocationService.OnLocationUpdateEvent) {
     Timber.i("Got location, ${event.location}")
+    zipCodeService.findAndSetClosestZipToLocation(event.location)
   }
 }
