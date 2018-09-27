@@ -1,39 +1,29 @@
 package com.nerdery.umbrella.ui.activities
 
-import android.Manifest
+import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.os.Handler
-import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.view.animation.Animation
 import android.view.animation.Animation.AnimationListener
 import android.view.animation.AnimationUtils
 import android.view.animation.DecelerateInterpolator
 import com.github.matteobattilana.weather.PrecipType.RAIN
-import com.karumi.dexter.Dexter
-import com.karumi.dexter.MultiplePermissionsReport
-import com.karumi.dexter.PermissionToken
-import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.nerdery.umbrella.R
 import com.nerdery.umbrella.UmbrellaApp
 import com.nerdery.umbrella.data.constants.SettingKeys
-import com.nerdery.umbrella.data.constants.ZipCodes
-import com.nerdery.umbrella.data.services.ILocationService
-import com.nerdery.umbrella.data.services.IZipCodeService
+import com.nerdery.umbrella.ui.activities.base.BaseActivity
 import kotlinx.android.synthetic.main.activity_splash.iv_arrow_right
 import kotlinx.android.synthetic.main.activity_splash.iv_umbrella
 import kotlinx.android.synthetic.main.activity_splash.ll_continue_button
 import kotlinx.android.synthetic.main.activity_splash.tv_owner
 import kotlinx.android.synthetic.main.activity_splash.v_rain_blocker
 import kotlinx.android.synthetic.main.activity_splash.wv_rain
-import org.greenrobot.eventbus.EventBus
-import org.greenrobot.eventbus.Subscribe
-import timber.log.Timber
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
-class SplashActivity : AppCompatActivity() {
+class SplashActivity : BaseActivity() {
   companion object {
     const val EMISSION_RATE = 500f
     const val FADE_OUT_PERCENTAGE = 1f
@@ -41,14 +31,10 @@ class SplashActivity : AppCompatActivity() {
   }
 
   @Inject lateinit var sharedPreferences: SharedPreferences
-  @Inject lateinit var locationService: ILocationService
-  @Inject lateinit var eventBus: EventBus
-  @Inject lateinit var zipCodeService: IZipCodeService
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     UmbrellaApp.INSTANCE?.component?.inject(this)
-    eventBus.register(this@SplashActivity)
     setContentView(R.layout.activity_splash)
     setupUI()
   }
@@ -57,32 +43,7 @@ class SplashActivity : AppCompatActivity() {
     setupWeatherAnimation()
     waitThenAnimate()
     ll_continue_button.setOnClickListener {
-      Dexter.withActivity(this)
-          .withPermissions(
-              Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION
-          )
-          .withListener(object : MultiplePermissionsListener {
-            override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
-              if (report?.areAllPermissionsGranted() == true) {
-                locationService.startLocationUpdates(true)
-              } else {
-                //defaulting to zip
-                sharedPreferences.edit()
-                    .putLong(SettingKeys.ZIP, ZipCodes.DEFAULT_ZIPCODE)
-                    .apply()
-                //tODO: head off to main activity
-              }
-            }
-
-            override fun onPermissionRationaleShouldBeShown(
-              permissions: MutableList<com.karumi.dexter.listener.PermissionRequest>?,
-              token: PermissionToken?
-            ) {
-              token?.continuePermissionRequest()
-            }
-
-          })
-          .check()
+      goToHomeActivity()
     }
   }
 
@@ -109,9 +70,13 @@ class SplashActivity : AppCompatActivity() {
           AnimationUtils.loadAnimation(this@SplashActivity, R.anim.bounce_to_right)
         iv_arrow_right.startAnimation(bouncingAnimation)
       } else {
-        //TODO: go to homeActivity
+        goToHomeActivity()
       }
     }, TimeUnit.SECONDS.toMillis(4))
+  }
+
+  private fun goToHomeActivity() {
+    startActivity(Intent(this, HomeActivity::class.java))
   }
 
   private fun animateOwner() {
@@ -141,11 +106,5 @@ class SplashActivity : AppCompatActivity() {
     })
     iv_umbrella.startAnimation(animation)
     v_rain_blocker.startAnimation(animation)
-  }
-
-  @Subscribe
-  fun onEvent(event: ILocationService.OnLocationUpdateEvent) {
-    Timber.i("Got location, ${event.location}")
-    zipCodeService.findAndSetClosestZipToLocation(event.location)
   }
 }

@@ -36,11 +36,12 @@ class UmbrellaModule(private val application: UmbrellaApp) {
   @UmbrellaScope
   fun providesApiServices(
     database: UmbrellaDatabase,
-    sharedPreferences: SharedPreferences
+    sharedPreferences: SharedPreferences,
+    eventBus: EventBus
   ): ApiServicesProvider {
     //TODO: decouple this provider into this module
     //Yes this is redundant for dagger's sake!
-    return ApiServicesProvider(application, database, sharedPreferences)
+    return ApiServicesProvider(application, database, sharedPreferences, eventBus)
   }
 
   @Provides

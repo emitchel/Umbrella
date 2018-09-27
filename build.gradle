@@ -120,6 +120,8 @@ dependencies {
 
   implementation 'com.karumi:dexter:5.0.0'
 
+  implementation 'com.facebook.shimmer:shimmer:0.2.0'
+
   implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
   implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:0.26.1"
   implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:0.26.1"

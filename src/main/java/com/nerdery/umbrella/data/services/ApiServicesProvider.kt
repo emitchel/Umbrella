@@ -14,6 +14,7 @@ import com.nerdery.umbrella.data.services.impl.ZipCodeService
 import com.squareup.picasso.Picasso
 import okhttp3.Cache
 import okhttp3.OkHttpClient
+import org.greenrobot.eventbus.EventBus
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
@@ -34,7 +35,8 @@ class ApiServicesProvider
 (
   application: Application,
   database: UmbrellaDatabase,
-  sharedPreferences: SharedPreferences
+  sharedPreferences: SharedPreferences,
+  eventBus: EventBus
 ) {
 
   /**
@@ -57,7 +59,7 @@ class ApiServicesProvider
     gsonBuilder.registerTypeAdapter(Date::class.java, DateDeserializer())
     gson = gsonBuilder.create()
 
-    zipCodeService = ZipCodeService(database, gson)
+    zipCodeService = ZipCodeService(database, gson, eventBus, sharedPreferences)
 
     iconService = IconService()
 

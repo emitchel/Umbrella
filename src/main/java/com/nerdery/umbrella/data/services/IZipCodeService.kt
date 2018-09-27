@@ -10,12 +10,17 @@ interface IZipCodeService {
     fun onLocationNotFound()
   }
 
-  fun findAndSetClosestZipToLocation(location: Location?)
+  fun findZipLocationsClosestToLocation(location: Location?)
 
   fun initDatabase(context: Context)
 
   fun getLatLongByZip(
     zipCode: String,
     listener: ZipLocationListener
+  )
+
+  class FoundZipLocationsClosestToLocationEvent(
+    val location: Location?,
+    val zipLocations: List<ZipLocation>?
   )
 }

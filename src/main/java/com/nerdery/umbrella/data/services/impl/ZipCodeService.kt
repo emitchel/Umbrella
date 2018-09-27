@@ -1,18 +1,21 @@
 package com.nerdery.umbrella.data.services.impl
 
 import android.content.Context
+import android.content.SharedPreferences
 import android.location.Location
 import com.google.gson.Gson
 import com.nerdery.umbrella.R.raw
 import com.nerdery.umbrella.data.database.UmbrellaDatabase
 import com.nerdery.umbrella.data.model.ZipLocation
 import com.nerdery.umbrella.data.services.IZipCodeService
+import com.nerdery.umbrella.data.services.IZipCodeService.FoundZipLocationsClosestToLocationEvent
 import com.nerdery.umbrella.data.services.IZipCodeService.ZipLocationListener
 import kotlinx.coroutines.experimental.CoroutineStart
 import kotlinx.coroutines.experimental.CoroutineStart.DEFAULT
 import kotlinx.coroutines.experimental.Dispatchers
 import kotlinx.coroutines.experimental.GlobalScope
 import kotlinx.coroutines.experimental.async
+import org.greenrobot.eventbus.EventBus
 import timber.log.Timber
 import java.io.BufferedReader
 import java.io.IOException
@@ -26,14 +29,16 @@ import java.text.DecimalFormat
  */
 class ZipCodeService(
   private val database: UmbrellaDatabase,
-  val gson: Gson
+  private val gson: Gson,
+  private val eventBus: EventBus,
+    private val sharedPreferences: SharedPreferences
 ) : IZipCodeService {
 
   companion object {
     const val PERCENTAGE_DIFFERENCE = .001
   }
 
-  override fun findAndSetClosestZipToLocation(location: Location?) {
+  override fun findZipLocationsClosestToLocation(location: Location?) {
     location?.let {
       GlobalScope.async(Dispatchers.Default, CoroutineStart.DEFAULT, null, {
         val df = DecimalFormat("#.##")
@@ -53,8 +58,10 @@ class ZipCodeService(
                 Math.min(longMin, longMax), Math.max(longMin, longMax)
             )
         Timber.i("Found ${acceptableZips.count()} acceptable zips")
-
+        eventBus.post(FoundZipLocationsClosestToLocationEvent(location, acceptableZips))
       })
+    } ?: run {
+      eventBus.post(FoundZipLocationsClosestToLocationEvent(location, null))
     }
   }
 
@@ -84,6 +91,7 @@ class ZipCodeService(
    * @param context Generic context to retrieve zip codes resources
    * @param zipCode Numerical zip code
    * @param listener ZipLocationListener used to listen for successful result or error
+   * //TODO use event bus paradigm
    */
   override fun getLatLongByZip(
     zipCode: String,

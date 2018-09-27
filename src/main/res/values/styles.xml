@@ -27,4 +27,9 @@
     <item name="android:windowBackground">@color/primary_2</item>
   </style>
 
+  <style name="ProgressDialogAnimation">
+    <item name="android:windowEnterAnimation">@anim/fadein</item>
+    <item name="android:windowExitAnimation">@anim/fadeout</item>
+  </style>
+
 </resources>
