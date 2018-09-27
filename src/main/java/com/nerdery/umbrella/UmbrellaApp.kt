@@ -18,12 +18,12 @@ class UmbrellaApp : Application() {
   var component: UmbrellaComponent? = null
 
   companion object {
-    var instance: UmbrellaApp? = null
+    var INSTANCE: UmbrellaApp? = null
   }
 
   override fun onCreate() {
     super.onCreate()
-    instance = this
+    INSTANCE = this
     setupDagger()
     setupStetho()
     setupTimber()

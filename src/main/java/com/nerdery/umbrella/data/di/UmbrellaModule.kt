@@ -1,5 +1,6 @@
 package com.nerdery.umbrella.data.di
 
+import android.content.SharedPreferences
 import android.preference.PreferenceManager
 import com.f2prateek.rx.preferences.RxSharedPreferences
 import com.google.gson.Gson
@@ -54,9 +55,14 @@ class UmbrellaModule(private val application: UmbrellaApp) {
 
   @Provides
   @UmbrellaScope
-  fun providesSharedPreferences(): RxSharedPreferences {
-    val preferences = PreferenceManager.getDefaultSharedPreferences(application)
-    return RxSharedPreferences.create(preferences)
+  fun providesSharedPreferences(): SharedPreferences {
+    return PreferenceManager.getDefaultSharedPreferences(application)
+  }
+
+  @Provides
+  @UmbrellaScope
+  fun providesRxSharedPreferences(sharedPreferences: SharedPreferences): RxSharedPreferences {
+    return RxSharedPreferences.create(sharedPreferences)
   }
 
   @Provides

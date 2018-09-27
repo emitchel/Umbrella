@@ -40,11 +40,11 @@ class ApiServicesProvider
    */
   val iconService: IconService
   /**
-   * @return an instance of the [WeatherApi] service that is ready to use.
+   * @return an INSTANCE of the [WeatherApi] service that is ready to use.
    */
   val weatherApi: WeatherApi
   /**
-   * @return an instance of [ZipCodeService]
+   * @return an INSTANCE of [ZipCodeService]
    */
   val zipCodeService: ZipCodeService
   val picasso: Picasso
