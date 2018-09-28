@@ -2,6 +2,8 @@ package com.nerdery.umbrella.ui.activities
 
 import android.Manifest.permission
 import android.content.SharedPreferences
+import android.os.Build.VERSION
+import android.os.Build.VERSION_CODES
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v4.content.ContextCompat
@@ -14,7 +16,6 @@ import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.nerdery.umbrella.R
 import com.nerdery.umbrella.UmbrellaApp
-import com.nerdery.umbrella.data.api.WeatherApi
 import com.nerdery.umbrella.data.constants.SettingKeys
 import com.nerdery.umbrella.data.constants.TempUnit
 import com.nerdery.umbrella.data.constants.TempUnit.FAHRENHEIT
@@ -22,15 +23,15 @@ import com.nerdery.umbrella.data.constants.ZipCodes
 import com.nerdery.umbrella.data.model.WeatherResponse
 import com.nerdery.umbrella.data.model.ZipLocation
 import com.nerdery.umbrella.data.services.ILocationService
+import com.nerdery.umbrella.data.services.IWeatherService
+import com.nerdery.umbrella.data.services.IWeatherService.GetWeatherForLatLongTempUnitEvent
 import com.nerdery.umbrella.data.services.IZipCodeService
 import com.nerdery.umbrella.data.services.IZipCodeService.FoundZipLocationsClosestToLocationEvent
 import com.nerdery.umbrella.data.services.IZipCodeService.GetZipLocationByZipEvent
 import com.nerdery.umbrella.ui.activities.base.BaseActivity
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_home.cl_parent
 import kotlinx.android.synthetic.main.activity_home.loading_indicator
+import kotlinx.android.synthetic.main.activity_home.toolbar
 import kotlinx.android.synthetic.main.activity_home.tv_location
 import kotlinx.android.synthetic.main.activity_home.tv_temp_subtitle
 import kotlinx.android.synthetic.main.activity_home.tv_temperature
@@ -50,9 +51,8 @@ class HomeActivity : BaseActivity() {
   @Inject lateinit var locationService: ILocationService
   @Inject lateinit var eventBus: EventBus
   @Inject lateinit var zipCodeService: IZipCodeService
-  @Inject lateinit var weatherApi: WeatherApi
+  @Inject lateinit var weatherService: IWeatherService
 
-  private var disposable = CompositeDisposable()
   private var zipCodeObservable: Observable<Long>? = null
   private var tempUnitObservable: Observable<TempUnit>? = null
   private var currentTempUnit: TempUnit = FAHRENHEIT
@@ -64,19 +64,19 @@ class HomeActivity : BaseActivity() {
     UmbrellaApp.INSTANCE?.component?.inject(this)
     eventBus.register(this)
     setContentView(R.layout.activity_home)
-    setupData()
+    setSupportActionBar(toolbar)
+    if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
+      toolbar?.elevation = 8f
+    }
+    //defaulting to warm color
+    updateStatusColor(ContextCompat.getColor(this, R.color.weather_warm))
   }
 
-  override fun onStart() {
-    super.onStart()
+  override fun onResume() {
+    super.onResume()
     if (currentZipLocation == null) {
       setupData()
     }
-  }
-
-  override fun onDestroy() {
-    super.onDestroy()
-    disposable.dispose()
   }
 
   private fun setupData() {
@@ -143,7 +143,6 @@ class HomeActivity : BaseActivity() {
       zipCodeObservable?.let { observable ->
         observable
             .subscribe {
-              showProgressDialog()
               //make a db request to get ziplocation see [ fun onEvent(event: GetZipLocationByZipEvent) ]
               zipCodeService.getZipLocationByZip(it)
             }
@@ -162,70 +161,58 @@ class HomeActivity : BaseActivity() {
 
   private fun setWeatherResponse(weatherResponse: WeatherResponse) {
     this.currentWeatherResponse = weatherResponse
-    setupUI()
+    setupUiWithData()
   }
 
-  private fun getWeatherForZipLocation(zipLocation: ZipLocation) {
+  private fun getWeatherForZipLocation(
+    zipLocation: ZipLocation,
+    tempUnit: TempUnit? = null
+  ) {
     loading_indicator.visibility = View.VISIBLE
-    disposable.add(
-        weatherApi.getWeather(zipLocation.latitude, zipLocation.longitude, currentTempUnit)
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribeOn(Schedulers.io())
-            .subscribe { response, throwable ->
-              loading_indicator.visibility = View.GONE
-              if (throwable != null) {
-                if (throwable is HttpException) {
-                  val responseBody = throwable.response()
-                  Snackbar.make(
-                      cl_parent,
-                      getString(R.string.api_error, responseBody.code().toString()),
-                      Snackbar.LENGTH_INDEFINITE
-                  )
-                      .setAction(
-                          getString(R.string.retry)
-                      ) { getWeatherForZipLocation(zipLocation) }
-
-                      .setActionTextColor(
-                          ContextCompat.getColor(this@HomeActivity, R.color.white)
-                      )
-                      .show()
-                } else if (throwable is IOException) {
-                  Snackbar.make(
-                      cl_parent, getString(R.string.network_error),
-                      Snackbar.LENGTH_INDEFINITE
-                  )
-                      .setAction(
-                          getString(R.string.retry)
-                      ) { getWeatherForZipLocation(zipLocation) }
-
-                      .setActionTextColor(
-                          ContextCompat.getColor(this@HomeActivity, R.color.white)
-                      )
-                      .show()
-                }
-              } else {
-                setWeatherResponse(response)
-              }
-            })
+    //response, see [fun onEvent(event: GetWeatherForLatLongTempUnitEvent)]
+    weatherService.getWeatherForLatLongTempUnit(
+        zipLocation.latitude, zipLocation.longitude, tempUnit ?: currentTempUnit
+    )
   }
 
-  private fun setupUI() {
+  private fun setupUiWithData() {
     tv_location.visibility = View.VISIBLE
     tv_temp_subtitle.visibility = View.VISIBLE
     tv_temperature.visibility = View.VISIBLE
+
     tv_location.text =
-        getString(R.string.city_state, currentZipLocation?.city, currentZipLocation?.state)
+        getString(
+            R.string.city_state, currentZipLocation?.city?.toLowerCase()?.capitalize(),
+            currentZipLocation?.state
+        )
     val temp = currentWeatherResponse?.currentForecast?.temp
-    //if (currentTempUnit == FAHRENHEIT && temp?:0.0 >= 60) {
-    tv_temperature.text =
-        if (currentWeatherResponse != null) Math.round(
-            temp ?: 0.0
-        ).toString()
-        else
-          getString(R.string.n_a)
+    val tempColor = ContextCompat.getColor(
+        this, weatherService.getColorForTemperatureAndUnit(temp ?: 0.0, currentTempUnit)
+    )
+    toolbar.setBackgroundColor(tempColor)
+
+    updateStatusColor(tempColor)
+
+    val tempString = if (currentWeatherResponse != null) Math.round(
+        temp ?: 0.0
+    ).toString()
+    else
+      getString(R.string.n_a)
+
+    tv_temperature.text = getString(
+        R.string.weather_temp, tempString
+    )
+
 
     tv_temp_subtitle.text = currentWeatherResponse?.currentForecast?.summary?.capitalize()
 
+  }
+
+  fun updateStatusColor(tempColor: Int) {
+    if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
+      //TODO: darken via https://stackoverflow.com/questions/33072365/how-to-darken-a-given-color-int
+      window.statusBarColor = tempColor
+    }
   }
 
   @Subscribe
@@ -238,8 +225,6 @@ class HomeActivity : BaseActivity() {
 
   @Subscribe(threadMode = ThreadMode.MAIN)
   fun onEvent(event: FoundZipLocationsClosestToLocationEvent) {
-    hideProgressDialog()
-
     //savings the default zipcode
     //tODo show a list of nearby zip codes for the to select from
     sharedPreferences.edit()
@@ -258,5 +243,43 @@ class HomeActivity : BaseActivity() {
   fun onEvent(event: GetZipLocationByZipEvent) {
     hideProgressDialog()
     setZipLocation(event.location)
+  }
+
+  @Subscribe(threadMode = ThreadMode.MAIN)
+  fun onEvent(event: GetWeatherForLatLongTempUnitEvent) {
+    loading_indicator.visibility = View.GONE
+    if (event.throwable != null) {
+      if (event.throwable is HttpException) {
+        val responseBody = event.throwable.response()
+        Snackbar.make(
+            cl_parent,
+            getString(R.string.api_error, responseBody.code().toString()),
+            Snackbar.LENGTH_INDEFINITE
+        )
+            .setAction(
+                getString(R.string.retry)
+            ) { getWeatherForZipLocation(currentZipLocation!!, event.tempUnitUsed) }
+
+            .setActionTextColor(
+                ContextCompat.getColor(this@HomeActivity, R.color.white)
+            )
+            .show()
+      } else if (event.throwable is IOException) {
+        Snackbar.make(
+            cl_parent, getString(R.string.network_error),
+            Snackbar.LENGTH_INDEFINITE
+        )
+            .setAction(
+                getString(R.string.retry)
+            ) { getWeatherForZipLocation(currentZipLocation!!, event.tempUnitUsed) }
+
+            .setActionTextColor(
+                ContextCompat.getColor(this@HomeActivity, R.color.white)
+            )
+            .show()
+      }
+    } else {
+      setWeatherResponse(event.response!!)
+    }
   }
 }

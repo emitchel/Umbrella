@@ -10,6 +10,7 @@
   <string name="overcast">Overcast</string>
   <string name="city_state">%s, %s</string>
   <string name="n_a">N/A</string>
+  <string name="weather_temp">%s°</string>
   <string name="api_error">Oops, Api request failed! %s</string>
   <string name="network_error">Uh oh, no internet?</string>
   <string name="retry">Retry</string>

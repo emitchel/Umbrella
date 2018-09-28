@@ -10,8 +10,10 @@ import com.nerdery.umbrella.data.database.UmbrellaDatabase
 import com.nerdery.umbrella.data.services.ApiServicesProvider
 import com.nerdery.umbrella.data.services.IIconService
 import com.nerdery.umbrella.data.services.ILocationService
+import com.nerdery.umbrella.data.services.IWeatherService
 import com.nerdery.umbrella.data.services.IZipCodeService
 import com.nerdery.umbrella.data.services.impl.LocationService
+import com.nerdery.umbrella.data.services.impl.WeatherService
 import com.squareup.picasso.Picasso
 import dagger.Module
 import dagger.Provides
@@ -82,8 +84,17 @@ class UmbrellaModule(private val application: UmbrellaApp) {
 
   @Provides
   @UmbrellaScope
-  fun providesWeatherService(apiServicesProvider: ApiServicesProvider): WeatherApi {
+  fun providesWeatherApi(apiServicesProvider: ApiServicesProvider): WeatherApi {
     return apiServicesProvider.weatherApi
+  }
+
+  @Provides
+  @UmbrellaScope
+  fun providesWeatherService(
+    weatherApi: WeatherApi,
+    eventBus: EventBus
+  ): IWeatherService {
+    return WeatherService(weatherApi, eventBus)
   }
 
   @Provides
