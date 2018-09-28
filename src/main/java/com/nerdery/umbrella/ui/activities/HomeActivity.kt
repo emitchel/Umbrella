@@ -65,10 +65,6 @@ class HomeActivity : BaseActivity() {
     eventBus.register(this)
     setContentView(R.layout.activity_home)
     setSupportActionBar(toolbar)
-    if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
-      toolbar?.elevation = 8f
-    }
-    //defaulting to warm color
     updateStatusColor(ContextCompat.getColor(this, R.color.weather_warm))
   }
 
