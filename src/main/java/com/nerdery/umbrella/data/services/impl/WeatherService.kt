@@ -1,6 +1,7 @@
 package com.nerdery.umbrella.data.services.impl
 
 import com.nerdery.umbrella.R
+import com.nerdery.umbrella.data.DateUtil
 import com.nerdery.umbrella.data.api.WeatherApi
 import com.nerdery.umbrella.data.constants.TempUnit
 import com.nerdery.umbrella.data.constants.TempUnit.FAHRENHEIT
@@ -10,7 +11,6 @@ import com.nerdery.umbrella.data.services.IWeatherService.GetWeatherForLatLongTe
 import io.reactivex.schedulers.Schedulers
 import org.greenrobot.eventbus.EventBus
 import java.util.Calendar
-import java.util.Date
 
 class WeatherService(
   private val weatherApi: WeatherApi,
@@ -40,7 +40,10 @@ class WeatherService(
 
           //we want to get a grouping of forecasts by day
           val groupedByDay =
-            response?.hourly?.hours?.groupBy { dateToCalendar(it.time).get(Calendar.DAY_OF_YEAR) }
+            response?.hourly?.hours?.groupBy {
+              DateUtil.dateToCalendar(it.time)
+                  .get(Calendar.DAY_OF_YEAR)
+            }
 
           val dayForecastCondition = groupedByDay?.map {
             DayForecastCondition(it.value[0].time, it.value)
@@ -62,15 +65,5 @@ class WeatherService(
               GetWeatherForLatLongTempUnitEvent(latitude, longitude, tempUnit, throwable, response)
           )
         }
-        .dispose()
   }
-}
-
-//TODO move to util and unit test
-private fun dateToCalendar(date: Date): Calendar {
-
-  val calendar = Calendar.getInstance()
-  calendar.time = date
-  return calendar
-
 }

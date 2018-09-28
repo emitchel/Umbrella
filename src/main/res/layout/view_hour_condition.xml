@@ -16,7 +16,7 @@
       android:layout_height="wrap_content"
       android:layout_gravity="center_horizontal"
       android:textColor="@color/text_color_primary"
-      android:textSize="@dimen/subtitle_2"
+      android:textSize="@dimen/body_1"
       tools:text="4:00 PM"
       />
 
@@ -36,7 +36,7 @@
       android:layout_height="wrap_content"
       android:layout_gravity="center_horizontal"
       android:textColor="@color/text_color_primary"
-      android:textSize="@dimen/subtitle_2"
+      android:textSize="@dimen/body_1"
       tools:text="70"
       />
 

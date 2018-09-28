@@ -14,4 +14,6 @@
   <string name="api_error">Oops, Api request failed! %s</string>
   <string name="network_error">Uh oh, no internet?</string>
   <string name="retry">Retry</string>
+  <string name="today">Today</string>
+  <string name="tomorrow">Tomorrow</string>
 </resources>

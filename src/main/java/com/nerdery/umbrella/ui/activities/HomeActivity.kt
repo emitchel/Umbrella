@@ -7,6 +7,8 @@ import android.os.Build.VERSION_CODES
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v4.content.ContextCompat
+import android.support.v7.widget.DefaultItemAnimator
+import android.support.v7.widget.LinearLayoutManager
 import android.view.View
 import com.f2prateek.rx.preferences.RxSharedPreferences
 import com.karumi.dexter.Dexter
@@ -29,8 +31,12 @@ import com.nerdery.umbrella.data.services.IZipCodeService
 import com.nerdery.umbrella.data.services.IZipCodeService.FoundZipLocationsClosestToLocationEvent
 import com.nerdery.umbrella.data.services.IZipCodeService.GetZipLocationByZipEvent
 import com.nerdery.umbrella.ui.activities.base.BaseActivity
+import com.nerdery.umbrella.ui.adapters.HourlyAdapter
+import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_home.cl_parent
 import kotlinx.android.synthetic.main.activity_home.loading_indicator
+import kotlinx.android.synthetic.main.activity_home.rv_hourly
+import kotlinx.android.synthetic.main.activity_home.srl_refresh
 import kotlinx.android.synthetic.main.activity_home.toolbar
 import kotlinx.android.synthetic.main.activity_home.tv_location
 import kotlinx.android.synthetic.main.activity_home.tv_temp_subtitle
@@ -52,7 +58,9 @@ class HomeActivity : BaseActivity() {
   @Inject lateinit var eventBus: EventBus
   @Inject lateinit var zipCodeService: IZipCodeService
   @Inject lateinit var weatherService: IWeatherService
+  @Inject lateinit var picasso: Picasso
 
+  private var hourlyAdapter: HourlyAdapter? = null
   private var zipCodeObservable: Observable<Long>? = null
   private var tempUnitObservable: Observable<TempUnit>? = null
   private var currentTempUnit: TempUnit = FAHRENHEIT
@@ -66,6 +74,7 @@ class HomeActivity : BaseActivity() {
     setContentView(R.layout.activity_home)
     setSupportActionBar(toolbar)
     updateStatusColor(ContextCompat.getColor(this, R.color.weather_warm))
+    srl_refresh.setOnRefreshListener { setupData() }
   }
 
   override fun onResume() {
@@ -78,6 +87,7 @@ class HomeActivity : BaseActivity() {
   private fun setupData() {
     //hiding attributes until they're loaded
     //TODO animate all the transitions...
+    loading_indicator.visibility = View.VISIBLE
     tv_location.visibility = View.INVISIBLE
     tv_temp_subtitle.visibility = View.INVISIBLE
     tv_temperature.visibility = View.INVISIBLE
@@ -199,11 +209,18 @@ class HomeActivity : BaseActivity() {
         R.string.weather_temp, tempString
     )
 
-
     tv_temp_subtitle.text = currentWeatherResponse?.currentForecast?.summary?.capitalize()
+
+    currentWeatherResponse?.dayForecastConditions?.let {
+      hourlyAdapter = HourlyAdapter(it, this, picasso)
+      rv_hourly.layoutManager = LinearLayoutManager(this)
+      rv_hourly.itemAnimator = DefaultItemAnimator()
+      rv_hourly.adapter = hourlyAdapter
+    }
 
   }
 
+  //TODO: move to util
   fun updateStatusColor(tempColor: Int) {
     if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
       //TODO: darken via https://stackoverflow.com/questions/33072365/how-to-darken-a-given-color-int
@@ -244,6 +261,7 @@ class HomeActivity : BaseActivity() {
   @Subscribe(threadMode = ThreadMode.MAIN)
   fun onEvent(event: GetWeatherForLatLongTempUnitEvent) {
     loading_indicator.visibility = View.GONE
+    srl_refresh.isRefreshing = false
     if (event.throwable != null) {
       if (event.throwable is HttpException) {
         val responseBody = event.throwable.response()
