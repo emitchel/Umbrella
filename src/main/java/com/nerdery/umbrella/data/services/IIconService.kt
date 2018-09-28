@@ -9,6 +9,13 @@ interface IIconService {
     override fun toString(): String {
       return value
     }
+
+    fun getTypeByStrin(value: String): IconType? {
+      enumValues<IconType>().forEach {
+        if (it.value == value) return it
+      }
+      return null
+    }
   }
 
   fun getUrlForIcon(

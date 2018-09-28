@@ -2,6 +2,7 @@
 <android.support.design.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/cl_parent"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
@@ -27,14 +28,17 @@
           android:layout_marginBottom="@dimen/default_margin"
           >
         <TextView
+            android:id="@+id/tv_location"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/white"
             android:textSize="@dimen/h6"
+            android:visibility="invisible"
             tools:text="Gretna, NE"
             />
 
         <com.nerdery.umbrella.ui.views.RippleImageView
+            android:id="@+id/iv_settings"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
@@ -46,15 +50,33 @@
             android:tint="@color/white"
             />
       </RelativeLayout>
-      <TextView
-          android:id="@+id/tv_temperature"
-          android:layout_width="wrap_content"
+      <RelativeLayout
+          android:layout_width="match_parent"
           android:layout_height="wrap_content"
-          android:layout_gravity="center_horizontal"
-          android:textColor="@color/white"
-          android:textSize="@dimen/h3"
-          tools:text="100"
-          />
+          >
+        <TextView
+            android:id="@+id/tv_temperature"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_gravity="center_horizontal"
+            android:textColor="@color/white"
+            android:textSize="@dimen/h3"
+            android:visibility="invisible"
+            tools:text="100"
+            />
+
+        <com.github.ybq.android.spinkit.SpinKitView
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/loading_indicator"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            app:SpinKit_Color="@color/white"
+            style="@style/SpinKitView.Large.DoubleBounce"
+            />
+
+      </RelativeLayout>
       <TextView
           android:id="@+id/tv_temp_subtitle"
           android:layout_width="wrap_content"
@@ -62,6 +84,7 @@
           android:layout_gravity="center_horizontal"
           android:textColor="@color/white"
           android:textSize="@dimen/subtitle_1"
+          android:visibility="invisible"
           tools:text="@string/clear"
           />
 

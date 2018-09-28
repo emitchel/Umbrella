@@ -2,10 +2,9 @@ package com.nerdery.umbrella.data.api
 
 import com.nerdery.umbrella.BuildConfig
 import com.nerdery.umbrella.data.model.WeatherResponse
-import com.nerdery.umbrella.data.model.TempUnit
+import com.nerdery.umbrella.data.constants.TempUnit
 
 import io.reactivex.Single
-import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query

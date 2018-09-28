@@ -2,6 +2,7 @@ package com.nerdery.umbrella.data.model;
 
 import com.google.gson.annotations.SerializedName;
 
+import com.nerdery.umbrella.data.constants.TempUnit;
 import java.util.Date;
 
 /**

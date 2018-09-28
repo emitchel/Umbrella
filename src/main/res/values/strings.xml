@@ -1,4 +1,5 @@
 <resources>
+  <!-- TODO split up strings into meaningful file names -->
   <string name="owner">by Elliot Mitchell</string>
   <string name="app_name">Umbrella</string>
   <string name="cont">Continue</string>
@@ -7,4 +8,9 @@
   <string name="loading">Loading…</string>
   <string name="clear">Clear</string>
   <string name="overcast">Overcast</string>
+  <string name="city_state">%s, %s</string>
+  <string name="n_a">N/A</string>
+  <string name="api_error">Oops, Api request failed! %s</string>
+  <string name="network_error">Uh oh, no internet?</string>
+  <string name="retry">Retry</string>
 </resources>

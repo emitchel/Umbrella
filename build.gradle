@@ -126,6 +126,8 @@ dependencies {
   implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:0.26.1"
   implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:0.26.1"
 
+  implementation 'com.github.ybq:Android-SpinKit:1.1.0'
+
   implementation "android.arch.persistence.room:runtime:$ROOM_VERSION"
   annotationProcessor "android.arch.persistence.room:compiler:$ROOM_VERSION"
   kapt "android.arch.persistence.room:compiler:$ROOM_VERSION"
