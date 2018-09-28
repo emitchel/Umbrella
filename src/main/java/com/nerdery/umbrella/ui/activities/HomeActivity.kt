@@ -12,13 +12,16 @@ import com.nerdery.umbrella.R
 import com.nerdery.umbrella.UmbrellaApp
 import com.nerdery.umbrella.data.constants.SettingKeys
 import com.nerdery.umbrella.data.constants.ZipCodes
+import com.nerdery.umbrella.data.model.ZipLocation
 import com.nerdery.umbrella.data.services.ILocationService
 import com.nerdery.umbrella.data.services.IZipCodeService
 import com.nerdery.umbrella.data.services.IZipCodeService.FoundZipLocationsClosestToLocationEvent
+import com.nerdery.umbrella.data.services.IZipCodeService.GetZipLocationByZipEvent
 import com.nerdery.umbrella.ui.activities.base.BaseActivity
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
+import rx.Observable
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -30,14 +33,14 @@ class HomeActivity : BaseActivity() {
   @Inject lateinit var eventBus: EventBus
   @Inject lateinit var zipCodeService: IZipCodeService
 
-  private var currentZipCode = ZipCodes.DEFAULT_ZIPCODE
+  private var zipCode: Observable<Long>? = null
+  private var currentZipLocation: ZipLocation? = null
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     UmbrellaApp.INSTANCE?.component?.inject(this)
-    eventBus.register(this@HomeActivity)
-    setContentView(R.layout.activity_splash)
-    setupUI()
+    eventBus.register(this)
+    setContentView(R.layout.activity_home)
     setupData()
   }
 
@@ -77,11 +80,25 @@ class HomeActivity : BaseActivity() {
           })
           .check()
     } else {
-      val zipCode = rxSharedPreferences.getLong(SettingKeys.ZIP, ZipCodes.DEFAULT_ZIPCODE)
-      zipCode.asObservable()
-          .subscribe {
-            //tODO get data from weather and reset everything
-          }
+      zipCode = rxSharedPreferences.getLong(SettingKeys.ZIP, ZipCodes.DEFAULT_ZIPCODE)
+          .asObservable()
+      zipCode?.let { observable ->
+        observable
+            .subscribe {
+              showProgressDialog()
+              //make a db request to get ziplocation see [ fun onEvent(event: GetZipLocationByZipEvent) ]
+              zipCodeService.getZipLocationByZip(it)
+            }
+      }
+    }
+  }
+
+  private fun setZipLocation(zipLocation: ZipLocation?) {
+    zipLocation?.let {
+      currentZipLocation = it
+      setupUI()
+    } ?: run {
+      //TODO: not found scenario, take them back to settings page? toast an Error?
     }
   }
 
@@ -99,8 +116,10 @@ class HomeActivity : BaseActivity() {
 
   @Subscribe(threadMode = ThreadMode.MAIN)
   fun onEvent(event: FoundZipLocationsClosestToLocationEvent) {
-    hideUmbrellaDialog()
+    hideProgressDialog()
     //tODo show a list of nearby zip codes for the to select from
+
+    //savings the default zipcode
     sharedPreferences.edit()
         .putLong(
             SettingKeys.ZIP, if (event.zipLocations != null && event.zipLocations.isNotEmpty())
@@ -109,6 +128,13 @@ class HomeActivity : BaseActivity() {
           ZipCodes.DEFAULT_ZIPCODE
         )
         .apply()
+
     setupData()
+  }
+
+  @Subscribe(threadMode = ThreadMode.MAIN)
+  fun onEvent(event: GetZipLocationByZipEvent) {
+    hideProgressDialog()
+    setZipLocation(event.location)
   }
 }

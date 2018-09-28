@@ -21,7 +21,7 @@ abstract class BaseActivity : AppCompatActivity() {
     }
   }
 
-  fun hideUmbrellaDialog() {
+  fun hideProgressDialog() {
     if (umbrellaDialog != null && umbrellaDialog!!.dialog != null && umbrellaDialog!!.dialog
             .isShowing
     ) {

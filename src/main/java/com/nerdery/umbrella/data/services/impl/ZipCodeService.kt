@@ -9,7 +9,7 @@ import com.nerdery.umbrella.data.database.UmbrellaDatabase
 import com.nerdery.umbrella.data.model.ZipLocation
 import com.nerdery.umbrella.data.services.IZipCodeService
 import com.nerdery.umbrella.data.services.IZipCodeService.FoundZipLocationsClosestToLocationEvent
-import com.nerdery.umbrella.data.services.IZipCodeService.ZipLocationListener
+import com.nerdery.umbrella.data.services.IZipCodeService.GetZipLocationByZipEvent
 import kotlinx.coroutines.experimental.CoroutineStart
 import kotlinx.coroutines.experimental.CoroutineStart.DEFAULT
 import kotlinx.coroutines.experimental.Dispatchers
@@ -31,11 +31,11 @@ class ZipCodeService(
   private val database: UmbrellaDatabase,
   private val gson: Gson,
   private val eventBus: EventBus,
-    private val sharedPreferences: SharedPreferences
+  private val sharedPreferences: SharedPreferences
 ) : IZipCodeService {
 
   companion object {
-    const val PERCENTAGE_DIFFERENCE = .001
+    const val PERCENTAGE_DIFFERENCE = .001 //TODO: not tested thoroughly....
   }
 
   override fun findZipLocationsClosestToLocation(location: Location?) {
@@ -91,25 +91,14 @@ class ZipCodeService(
    * @param context Generic context to retrieve zip codes resources
    * @param zipCode Numerical zip code
    * @param listener ZipLocationListener used to listen for successful result or error
-   * //TODO use event bus paradigm
    */
-  override fun getLatLongByZip(
-    zipCode: String,
-    listener: ZipLocationListener
+  override fun getZipLocationByZip(
+    zipCode: Long
   ) {
-    var zipLong: Long = 0
-    try {
-      zipLong = java.lang.Long.valueOf(zipCode)
-    } catch (e: NumberFormatException) {
-      listener.onLocationNotFound()
-    }
     GlobalScope.async(Dispatchers.Default, DEFAULT, null, {
-      database.zipLocationDao()
-          .all.first { it.zipCode == zipLong }?.let {
-        listener.onLocationFound(it)
-      } ?: run {
-        listener.onLocationNotFound()
-      }
+      val location = database.zipLocationDao()
+          .all.firstOrNull { it.zipCode == zipCode }
+      eventBus.post(GetZipLocationByZipEvent(location))
     })
   }
 

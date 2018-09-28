@@ -5,4 +5,6 @@
   <string name="fahrenheit">Fahrenheit</string>
   <string name="celsius">Celsius</string>
   <string name="loading">Loading…</string>
+  <string name="clear">Clear</string>
+  <string name="overcast">Overcast</string>
 </resources>

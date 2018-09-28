@@ -71,7 +71,6 @@
       android:alpha="0"
       android:background="?android:attr/selectableItemBackground"
       android:clickable="true"
-
       android:focusable="true"
       android:orientation="horizontal"
       android:paddingBottom="8dp"
@@ -85,6 +84,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:text="@string/cont"
+        android:textAllCaps="true"
         android:textColor="@color/white"
         android:textSize="@dimen/h5"
         />
@@ -93,7 +93,7 @@
         android:id="@+id/iv_arrow_right"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
+        android:layout_gravity="center_vertical"
         android:contentDescription="@string/cont"
         android:src="@drawable/ic_arrow_right"
         />
