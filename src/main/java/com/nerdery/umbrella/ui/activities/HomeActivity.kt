@@ -3,8 +3,6 @@ package com.nerdery.umbrella.ui.activities
 import android.Manifest.permission
 import android.content.Intent
 import android.content.SharedPreferences
-import android.os.Build.VERSION
-import android.os.Build.VERSION_CODES
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v4.content.ContextCompat
@@ -22,6 +20,7 @@ import com.nerdery.umbrella.R
 import com.nerdery.umbrella.UmbrellaApp
 import com.nerdery.umbrella.data.constants.SettingKeys
 import com.nerdery.umbrella.data.constants.TempUnit
+import com.nerdery.umbrella.data.constants.TempUnit.CELSIUS
 import com.nerdery.umbrella.data.constants.TempUnit.FAHRENHEIT
 import com.nerdery.umbrella.data.constants.ZipCodes
 import com.nerdery.umbrella.data.model.WeatherResponse
@@ -67,7 +66,7 @@ class HomeActivity : BaseActivity() {
 
   private var dayForecastConditionAdapter: DayForecastConditionAdapter? = null
   private var zipCodeObservable: Observable<Long>? = null
-  private var tempUnitObservable: Observable<TempUnit>? = null
+  private var tempUnitObservable: Observable<String>? = null
   private var currentTempUnit: TempUnit = FAHRENHEIT
   private var currentZipLocation: ZipLocation? = null
   private var currentWeatherResponse: WeatherResponse? = null
@@ -125,12 +124,12 @@ class HomeActivity : BaseActivity() {
 
   private fun setupCurrentTempUnit() {
     if (tempUnitObservable == null) {
-      tempUnitObservable = rxSharedPreferences.getEnum(
-          SettingKeys.TEMP_UNIT, FAHRENHEIT, TempUnit::class.java
+      tempUnitObservable = rxSharedPreferences.getString(
+          SettingKeys.TEMP_UNIT, TempUnit.FAHRENHEIT.toString()
       )
           .asObservable()
       tempUnitObservable?.subscribe { tempUnit ->
-        currentTempUnit = tempUnit
+        currentTempUnit = if (tempUnit == TempUnit.FAHRENHEIT.toString(this)) FAHRENHEIT else CELSIUS
         currentZipLocation?.let {
           getWeatherForZipLocation(it)
         }

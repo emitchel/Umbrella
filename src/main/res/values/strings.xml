@@ -18,4 +18,6 @@
   <string name="tomorrow">Tomorrow</string>
   <string name="zip">Zip</string>
   <string name="units">Units</string>
+  <string name="cancel">Cancel</string>
+  <string name="ok">Ok</string>
 </resources>
