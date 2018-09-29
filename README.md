@@ -6,3 +6,5 @@ What would I have done if given more time?
 - Better onboarding process
 - Figure out why original picasso settings weren't working
 - Image API doesn't provide images for all scenarios? Would look into this
+- Use actual settings preferences provided by Android 
+- Fix up alert dialogs used in settings
