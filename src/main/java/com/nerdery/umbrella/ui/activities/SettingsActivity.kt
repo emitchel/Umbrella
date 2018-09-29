@@ -73,10 +73,12 @@ class SettingsActivity : BaseActivity() {
           .setTitle(R.string.zip)
       dialog.setView(input)
       dialog.setPositiveButton(R.string.ok) { _, _ ->
-        sharedPreferences.edit()
-            .putLong(SettingKeys.ZIP, input.text.toString().toLong())
-            .apply()
-        setPreferenceValues()
+        if (input.text.toString().isNotEmpty()) {
+          sharedPreferences.edit()
+              .putLong(SettingKeys.ZIP, input.text.toString().toLong())
+              .apply()
+          setPreferenceValues()
+        }
       }
       dialog.show()
     }
