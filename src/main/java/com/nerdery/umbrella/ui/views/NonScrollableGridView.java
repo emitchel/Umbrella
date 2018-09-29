@@ -5,7 +5,8 @@ import android.util.AttributeSet;
 import android.widget.GridView;
 
 public class NonScrollableGridView extends GridView {
-  public NonScrollableGridView(Context context, AttributeSet attrs) {
+  public NonScrollableGridView(Context context,
+      AttributeSet attrs) {
     super(context, attrs);
   }
 

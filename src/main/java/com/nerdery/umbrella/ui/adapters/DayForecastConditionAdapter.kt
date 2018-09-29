@@ -58,7 +58,9 @@ class DayForecastConditionAdapter(
 
       //TODO: this is NOT efficient, what is the better approach here?
       val gridAdapter =
-        HourlyConditionsAdapter(picasso, context, dayForecastCondition.forecastConditions)
+        HourlyConditionsAdapter(
+            picasso, context, iconService, dayForecastCondition.forecastConditions
+        )
       grid.adapter = gridAdapter
 
     }

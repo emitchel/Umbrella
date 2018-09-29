@@ -69,8 +69,11 @@ class ApiServicesProvider
         provideDarkSkyRetrofit(client, gson).create(WeatherApi::class.java)
 
     picasso = Picasso.Builder(application)
+        .loggingEnabled(true)
         .downloader(OkHttp3Downloader(client))
-        .listener { picasso, uri, e -> Timber.e(e, "Failed to load image: %s", uri) }
+        .listener { picasso, uri, e ->
+          Timber.e(e, "Failed to load image: %s", uri)
+        }
         .build()
   }
 
@@ -97,7 +100,6 @@ class ApiServicesProvider
   }
 
   companion object {
-
     private val DISK_CACHE_SIZE = MEGABYTES.toBytes(50)
         .toInt()
   }
