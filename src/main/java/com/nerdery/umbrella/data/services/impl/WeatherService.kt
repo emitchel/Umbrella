@@ -57,7 +57,16 @@ class WeatherService(
                   ?.highestTemp = true
               dayGrouping.forecastConditions.minBy { it.temp }
                   ?.lowestTemp = true
+
+              //if min and max temp day is the same, remove attributes (because docs)
+              if (dayGrouping.forecastConditions.firstOrNull { it.lowestTemp } == dayGrouping.forecastConditions.firstOrNull { it.highestTemp }) {
+                dayGrouping.forecastConditions.firstOrNull { it.lowestTemp }
+                    ?.lowestTemp = false
+                dayGrouping.forecastConditions.firstOrNull { it.lowestTemp }
+                    ?.highestTemp = false
+              }
             }
+
             response.dayForecastConditions = dayForecastCondition
           }
 
