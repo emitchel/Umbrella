@@ -31,7 +31,7 @@
 
   <style name="PrimaryDialogTheme" parent="Theme.AppCompat.Light.Dialog.Alert">
     <item name="android:textColorPrimary">@color/white</item>
-    <item name="android:background">@color/primary</item>
+    <item name="android:background">@color/dark_gray</item>
     <item name="colorAccent">@color/white</item>
   </style>
 
