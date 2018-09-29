@@ -1,6 +1,7 @@
 package com.nerdery.umbrella.ui.activities
 
 import android.Manifest.permission
+import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Build.VERSION
 import android.os.Build.VERSION_CODES
@@ -85,7 +86,6 @@ class HomeActivity : BaseActivity() {
         toolbar.layoutParams.height = toolbar.height
         toolbar.viewTreeObserver.removeOnGlobalLayoutListener(this)
       }
-
     })
   }
 
@@ -96,7 +96,7 @@ class HomeActivity : BaseActivity() {
       )
     }
     iv_settings.setOnClickListener {
-      //TODO go to settings
+      startActivity(Intent(this, SettingsActivity::class.java))
     }
   }
 
@@ -253,14 +253,6 @@ class HomeActivity : BaseActivity() {
       rv_hourly.adapter = dayForecastConditionAdapter
     }
 
-  }
-
-  //TODO: move to util
-  fun updateStatusColor(tempColor: Int) {
-    if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
-      //TODO: darken via https://stackoverflow.com/questions/33072365/how-to-darken-a-given-color-int
-      window.statusBarColor = tempColor
-    }
   }
 
   @Subscribe

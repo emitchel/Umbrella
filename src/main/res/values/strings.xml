@@ -16,4 +16,6 @@
   <string name="retry">Retry</string>
   <string name="today">Today</string>
   <string name="tomorrow">Tomorrow</string>
+  <string name="zip">Zip</string>
+  <string name="units">Units</string>
 </resources>

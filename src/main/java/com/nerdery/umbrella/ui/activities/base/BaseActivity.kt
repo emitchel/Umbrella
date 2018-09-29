@@ -1,12 +1,22 @@
 package com.nerdery.umbrella.ui.activities.base
 
 import android.content.Intent
+import android.os.Build.VERSION
+import android.os.Build.VERSION_CODES
 import android.support.v7.app.AppCompatActivity
 import com.nerdery.umbrella.R
 import com.nerdery.umbrella.ui.dialogs.UmbrellaDialog
 
 abstract class BaseActivity : AppCompatActivity() {
   private var umbrellaDialog: UmbrellaDialog? = null
+
+  //TODO: move to util
+  fun updateStatusColor(tempColor: Int) {
+    if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
+      //TODO: darken via https://stackoverflow.com/questions/33072365/how-to-darken-a-given-color-int
+      window.statusBarColor = tempColor
+    }
+  }
 
   fun showProgressDialog() {
     if (umbrellaDialog == null) {
