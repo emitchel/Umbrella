@@ -30,9 +30,9 @@
   </style>
 
   <style name="PrimaryDialogTheme" parent="Theme.AppCompat.Light.Dialog.Alert">
-    <item name="android:textColorPrimary">@color/text_color_primary</item>
-    <item name="android:background">@color/off_white</item>
-    <item name="colorAccent">@color/text_color_primary</item>
+    <item name="android:textColorPrimary">@color/white</item>
+    <item name="android:background">@color/primary</item>
+    <item name="colorAccent">@color/white</item>
   </style>
 
   <style name="Theme.Umbrella.FullScreen" parent="Theme.AppCompat.Light.NoActionBar">

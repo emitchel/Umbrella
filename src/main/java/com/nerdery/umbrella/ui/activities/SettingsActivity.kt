@@ -1,16 +1,18 @@
 package com.nerdery.umbrella.ui.activities
 
-import android.app.AlertDialog
+import android.R.layout
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.support.v7.app.AlertDialog.Builder
 import android.view.MenuItem
 import android.widget.ArrayAdapter
 import android.widget.EditText
-import android.widget.LinearLayout
+import android.widget.LinearLayout.LayoutParams
 import com.nerdery.umbrella.R
+import com.nerdery.umbrella.R.string
 import com.nerdery.umbrella.UmbrellaApp
 import com.nerdery.umbrella.data.constants.SettingKeys
-import com.nerdery.umbrella.data.constants.TempUnit
+import com.nerdery.umbrella.data.constants.TempUnit.CELSIUS
 import com.nerdery.umbrella.data.constants.TempUnit.FAHRENHEIT
 import com.nerdery.umbrella.data.constants.ZipCodes
 import com.nerdery.umbrella.ui.activities.base.BaseActivity
@@ -32,17 +34,21 @@ class SettingsActivity : BaseActivity() {
 
     setPreferenceValues()
 
+    setupOnClickListeners()
+  }
+
+  private fun setupOnClickListeners() {
     rl_units.setOnClickListener {
-      val builderSingle = AlertDialog.Builder(this)
-      builderSingle.setTitle(getString(R.string.units))
+      val builderSingle = Builder(this)
+      builderSingle.setTitle(getString(string.units))
 
       val arrayAdapter =
-        ArrayAdapter<String>(this, android.R.layout.select_dialog_singlechoice)
-      arrayAdapter.add(TempUnit.FAHRENHEIT.toString(this));
-      arrayAdapter.add(TempUnit.CELSIUS.toString(this));
+        ArrayAdapter<String>(this, layout.select_dialog_item)
+      arrayAdapter.add(FAHRENHEIT.toString(this))
+      arrayAdapter.add(CELSIUS.toString(this))
 
       builderSingle.setNegativeButton(
-          getString(R.string.cancel)
+          getString(string.cancel)
       ) { dialog, which -> dialog.dismiss() }
 
       builderSingle.setAdapter(arrayAdapter) { dialog, which ->
@@ -50,7 +56,7 @@ class SettingsActivity : BaseActivity() {
         sharedPreferences.edit()
             .putString(
                 SettingKeys.TEMP_UNIT,
-                if (which == 0) TempUnit.FAHRENHEIT.toString(this) else TempUnit.CELSIUS.toString(
+                if (which == 0) FAHRENHEIT.toString(this) else CELSIUS.toString(
                     this
                 )
             )
@@ -64,15 +70,15 @@ class SettingsActivity : BaseActivity() {
     rl_zip.setOnClickListener {
 
       val input = EditText(this)
-      val lp = LinearLayout.LayoutParams(
-          LinearLayout.LayoutParams.MATCH_PARENT,
-          LinearLayout.LayoutParams.MATCH_PARENT
+      val lp = LayoutParams(
+          LayoutParams.MATCH_PARENT,
+          LayoutParams.MATCH_PARENT
       )
       input.layoutParams = lp
-      val dialog = AlertDialog.Builder(this)
-          .setTitle(R.string.zip)
+      val dialog = Builder(this)
+          .setTitle(string.zip)
       dialog.setView(input)
-      dialog.setPositiveButton(R.string.ok) { _, _ ->
+      dialog.setPositiveButton(string.ok) { _, _ ->
         if (input.text.toString().isNotEmpty()) {
           sharedPreferences.edit()
               .putLong(SettingKeys.ZIP, input.text.toString().toLong())
