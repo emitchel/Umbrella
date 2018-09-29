@@ -10,6 +10,7 @@ import android.support.v4.content.ContextCompat
 import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
+import android.view.ViewTreeObserver.OnGlobalLayoutListener
 import com.f2prateek.rx.preferences.RxSharedPreferences
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
@@ -24,6 +25,7 @@ import com.nerdery.umbrella.data.constants.TempUnit.FAHRENHEIT
 import com.nerdery.umbrella.data.constants.ZipCodes
 import com.nerdery.umbrella.data.model.WeatherResponse
 import com.nerdery.umbrella.data.model.ZipLocation
+import com.nerdery.umbrella.data.services.IIconService
 import com.nerdery.umbrella.data.services.ILocationService
 import com.nerdery.umbrella.data.services.IWeatherService
 import com.nerdery.umbrella.data.services.IWeatherService.GetWeatherForLatLongTempUnitEvent
@@ -31,9 +33,10 @@ import com.nerdery.umbrella.data.services.IZipCodeService
 import com.nerdery.umbrella.data.services.IZipCodeService.FoundZipLocationsClosestToLocationEvent
 import com.nerdery.umbrella.data.services.IZipCodeService.GetZipLocationByZipEvent
 import com.nerdery.umbrella.ui.activities.base.BaseActivity
-import com.nerdery.umbrella.ui.adapters.HourlyAdapter
+import com.nerdery.umbrella.ui.adapters.DayForecastConditionAdapter
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_home.cl_parent
+import kotlinx.android.synthetic.main.activity_home.iv_settings
 import kotlinx.android.synthetic.main.activity_home.loading_indicator
 import kotlinx.android.synthetic.main.activity_home.rv_hourly
 import kotlinx.android.synthetic.main.activity_home.srl_refresh
@@ -58,9 +61,10 @@ class HomeActivity : BaseActivity() {
   @Inject lateinit var eventBus: EventBus
   @Inject lateinit var zipCodeService: IZipCodeService
   @Inject lateinit var weatherService: IWeatherService
+  @Inject lateinit var iconService: IIconService
   @Inject lateinit var picasso: Picasso
 
-  private var hourlyAdapter: HourlyAdapter? = null
+  private var dayForecastConditionAdapter: DayForecastConditionAdapter? = null
   private var zipCodeObservable: Observable<Long>? = null
   private var tempUnitObservable: Observable<TempUnit>? = null
   private var currentTempUnit: TempUnit = FAHRENHEIT
@@ -74,7 +78,26 @@ class HomeActivity : BaseActivity() {
     setContentView(R.layout.activity_home)
     setSupportActionBar(toolbar)
     updateStatusColor(ContextCompat.getColor(this, R.color.weather_warm))
-    srl_refresh.setOnRefreshListener { setupData() }
+    setupListeners()
+    toolbar.viewTreeObserver.addOnGlobalLayoutListener(object : OnGlobalLayoutListener {
+      override fun onGlobalLayout() {
+        //making height static
+        toolbar.layoutParams.height = toolbar.height
+        toolbar.viewTreeObserver.removeOnGlobalLayoutListener(this)
+      }
+
+    })
+  }
+
+  private fun setupListeners() {
+    srl_refresh.setOnRefreshListener {
+      getWeatherForZipLocation(
+          currentZipLocation
+      )
+    }
+    iv_settings.setOnClickListener {
+      //TODO go to settings
+    }
   }
 
   override fun onResume() {
@@ -87,23 +110,30 @@ class HomeActivity : BaseActivity() {
   private fun setupData() {
     //hiding attributes until they're loaded
     //TODO animate all the transitions...
-    loading_indicator.visibility = View.VISIBLE
-    tv_location.visibility = View.INVISIBLE
-    tv_temp_subtitle.visibility = View.INVISIBLE
-    tv_temperature.visibility = View.INVISIBLE
+    showLoadingIndicator()
     setupCurrentTempUnit()
     setupCurrentZipLocation()
   }
 
+  private fun showLoadingIndicator() {
+    loading_indicator.visibility = View.VISIBLE
+    iv_settings.visibility = View.INVISIBLE
+    tv_location.visibility = View.INVISIBLE
+    tv_temp_subtitle.visibility = View.INVISIBLE
+    tv_temperature.visibility = View.INVISIBLE
+  }
+
   private fun setupCurrentTempUnit() {
-    tempUnitObservable = rxSharedPreferences.getEnum(
-        SettingKeys.TEMP_UNIT, FAHRENHEIT, TempUnit::class.java
-    )
-        .asObservable()
-    tempUnitObservable?.subscribe { tempUnit ->
-      currentTempUnit = tempUnit
-      currentZipLocation?.let {
-        getWeatherForZipLocation(it)
+    if (tempUnitObservable == null) {
+      tempUnitObservable = rxSharedPreferences.getEnum(
+          SettingKeys.TEMP_UNIT, FAHRENHEIT, TempUnit::class.java
+      )
+          .asObservable()
+      tempUnitObservable?.subscribe { tempUnit ->
+        currentTempUnit = tempUnit
+        currentZipLocation?.let {
+          getWeatherForZipLocation(it)
+        }
       }
     }
   }
@@ -144,14 +174,16 @@ class HomeActivity : BaseActivity() {
           })
           .check()
     } else {
-      zipCodeObservable = rxSharedPreferences.getLong(SettingKeys.ZIP, ZipCodes.DEFAULT_ZIPCODE)
-          .asObservable()
-      zipCodeObservable?.let { observable ->
-        observable
-            .subscribe {
-              //make a db request to get ziplocation see [ fun onEvent(event: GetZipLocationByZipEvent) ]
-              zipCodeService.getZipLocationByZip(it)
-            }
+      if (zipCodeObservable == null) {
+        zipCodeObservable = rxSharedPreferences.getLong(SettingKeys.ZIP, ZipCodes.DEFAULT_ZIPCODE)
+            .asObservable()
+        zipCodeObservable?.let { observable ->
+          observable
+              .subscribe {
+                //make a db request to get ziplocation see [ fun onEvent(event: GetZipLocationByZipEvent) ]
+                zipCodeService.getZipLocationByZip(it)
+              }
+        }
       }
     }
   }
@@ -171,20 +203,23 @@ class HomeActivity : BaseActivity() {
   }
 
   private fun getWeatherForZipLocation(
-    zipLocation: ZipLocation,
+    zipLocation: ZipLocation?,
     tempUnit: TempUnit? = null
   ) {
-    loading_indicator.visibility = View.VISIBLE
-    //response, see [fun onEvent(event: GetWeatherForLatLongTempUnitEvent)]
-    weatherService.getWeatherForLatLongTempUnit(
-        zipLocation.latitude, zipLocation.longitude, tempUnit ?: currentTempUnit
-    )
+    zipLocation?.let {
+      showLoadingIndicator()
+      //response, see [fun onEvent(event: GetWeatherForLatLongTempUnitEvent)]
+      weatherService.getWeatherForLatLongTempUnit(
+          it.latitude, it.longitude, tempUnit ?: currentTempUnit
+      )
+    }
   }
 
   private fun setupUiWithData() {
     tv_location.visibility = View.VISIBLE
     tv_temp_subtitle.visibility = View.VISIBLE
     tv_temperature.visibility = View.VISIBLE
+    iv_settings.visibility = View.VISIBLE
 
     tv_location.text =
         getString(
@@ -212,10 +247,10 @@ class HomeActivity : BaseActivity() {
     tv_temp_subtitle.text = currentWeatherResponse?.currentForecast?.summary?.capitalize()
 
     currentWeatherResponse?.dayForecastConditions?.let {
-      hourlyAdapter = HourlyAdapter(it, this, picasso)
+      dayForecastConditionAdapter = DayForecastConditionAdapter(iconService, it, this, picasso)
       rv_hourly.layoutManager = LinearLayoutManager(this)
       rv_hourly.itemAnimator = DefaultItemAnimator()
-      rv_hourly.adapter = hourlyAdapter
+      rv_hourly.adapter = dayForecastConditionAdapter
     }
 
   }

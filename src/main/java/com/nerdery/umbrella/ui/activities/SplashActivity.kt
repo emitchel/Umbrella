@@ -11,6 +11,7 @@ import android.view.animation.AnimationUtils
 import android.view.animation.DecelerateInterpolator
 import com.github.matteobattilana.weather.PrecipType.RAIN
 import com.nerdery.umbrella.R
+import com.nerdery.umbrella.R.anim
 import com.nerdery.umbrella.UmbrellaApp
 import com.nerdery.umbrella.data.constants.SettingKeys
 import com.nerdery.umbrella.ui.activities.base.BaseActivity
@@ -21,6 +22,7 @@ import kotlinx.android.synthetic.main.activity_splash.tv_owner
 import kotlinx.android.synthetic.main.activity_splash.v_rain_blocker
 import kotlinx.android.synthetic.main.activity_splash.wv_rain
 import java.util.concurrent.TimeUnit
+import java.util.concurrent.TimeUnit.SECONDS
 import javax.inject.Inject
 
 class SplashActivity : BaseActivity() {
@@ -59,6 +61,9 @@ class SplashActivity : BaseActivity() {
       animateUmbrella()
     }, TimeUnit.SECONDS.toMillis(2))
 
+  }
+
+  fun animateNextSteps() {
     Handler().postDelayed({
       if (!sharedPreferences.getBoolean(SettingKeys.USER_ONBOARDED, false)) {
         ll_continue_button.animate()
@@ -67,12 +72,12 @@ class SplashActivity : BaseActivity() {
             .setInterpolator(DecelerateInterpolator())
             .start()
         val bouncingAnimation =
-          AnimationUtils.loadAnimation(this@SplashActivity, R.anim.bounce_to_right)
+          AnimationUtils.loadAnimation(this@SplashActivity, anim.bounce_to_right)
         iv_arrow_right.startAnimation(bouncingAnimation)
       } else {
         goToHomeActivity()
       }
-    }, TimeUnit.SECONDS.toMillis(4))
+    }, SECONDS.toMillis(2))
   }
 
   private fun goToHomeActivity() {
@@ -95,6 +100,7 @@ class SplashActivity : BaseActivity() {
 
       override fun onAnimationEnd(animation: Animation?) {
         animateOwner()
+        animateNextSteps()
       }
 
       override fun onAnimationRepeat(animation: Animation?) {

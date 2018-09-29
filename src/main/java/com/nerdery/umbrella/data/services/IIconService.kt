@@ -10,7 +10,7 @@ interface IIconService {
       return value
     }
 
-    fun getTypeByStrin(value: String): IconType? {
+    fun getTypeByString(value: String): IconType? {
       enumValues<IconType>().forEach {
         if (it.value == value) return it
       }
@@ -19,7 +19,7 @@ interface IIconService {
   }
 
   fun getUrlForIcon(
-    icon: IconType,
+    icon: String,
     highlighted: Boolean
   ): String
 

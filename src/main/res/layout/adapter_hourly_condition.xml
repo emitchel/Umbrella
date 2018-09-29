@@ -10,7 +10,6 @@
     android:layout_marginTop="@dimen/default_half_margin"
     app:cardCornerRadius="3dp"
     app:cardElevation="1dp"
-
     >
 
   <LinearLayout
@@ -24,7 +23,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textColor="@color/text_color_primary"
-        android:textSize="@dimen/subtitle_1"
+        android:textSize="@dimen/h5"
+        android:textStyle="bold"
         tools:text="Today"
         />
     <View
@@ -34,14 +34,19 @@
         android:background="@color/forecast_card_divider"
         />
 
-    <com.google.android.flexbox.FlexboxLayout
-        android:id="@+id/fb_hour_conditions"
+    <com.nerdery.umbrella.ui.views.NonScrollableGridView
+        android:id="@+id/grid_hours"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        >
-
-    </com.google.android.flexbox.FlexboxLayout>
+        android:columnWidth="80dp"
+        android:drawSelectorOnTop="true"
+        android:gravity="center"
+        android:horizontalSpacing="4dp"
+        android:numColumns="auto_fit"
+        android:stretchMode="columnWidth"
+        android:verticalSpacing="4dp"
+        />
 
   </LinearLayout>
 

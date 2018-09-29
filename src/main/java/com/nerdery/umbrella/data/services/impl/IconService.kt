@@ -19,7 +19,7 @@ class IconService : IIconService {
    * @return A URL to an icon
    */
   override fun getUrlForIcon(
-    icon: IconType,
+    icon: String,
     highlighted: Boolean
   ): String {
     val highlightParam = if (highlighted) "-selected" else ""

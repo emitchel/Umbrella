@@ -8,16 +8,18 @@ import android.view.ViewGroup
 import com.nerdery.umbrella.R
 import com.nerdery.umbrella.data.DateUtil
 import com.nerdery.umbrella.data.model.DayForecastCondition
+import com.nerdery.umbrella.data.services.IIconService
 import com.squareup.picasso.Picasso
-import kotlinx.android.synthetic.main.adapter_hourly_condition.view.fb_hour_conditions
+import kotlinx.android.synthetic.main.adapter_hourly_condition.view.grid_hours
 import kotlinx.android.synthetic.main.adapter_hourly_condition.view.tv_day
 import java.util.Calendar
 
-class HourlyAdapter(
+class DayForecastConditionAdapter(
+  private val iconService: IIconService,
   private val dayForecastConditions: List<DayForecastCondition>,
   private val context: Context,
   private val picasso: Picasso
-) : RecyclerView.Adapter<HourlyAdapter.ViewHolder>() {
+) : RecyclerView.Adapter<DayForecastConditionAdapter.ViewHolder>() {
 
   private var inflater: LayoutInflater = LayoutInflater.from(context)
   private var today = DateUtil.getTodayAt0()
@@ -40,11 +42,10 @@ class HourlyAdapter(
   }
 
   inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-    var day = itemView.tv_day
-    var flexBox = itemView.fb_hour_conditions
+
     fun bind(dayForecastCondition: DayForecastCondition) {
-//      time.text = DateUtil.formatDate(dayForecastCondition.day, DateUtil.DATE_PARSE_TIME_ONLY, true)
-//      temp.text = context.getString(R.string.weather_temp, dayFore)
+      var day = itemView.tv_day
+      var grid = itemView.grid_hours
       val calendarDay = DateUtil.dateToCalendar(dayForecastCondition.day)
       when {
         calendarDay.get(Calendar.DAY_OF_YEAR) == today.get(Calendar.DAY_OF_YEAR) -> day.text =
@@ -55,7 +56,14 @@ class HourlyAdapter(
             DateUtil.formatDate(dayForecastCondition.day, DateUtil.DATE_PARSE_MONDAY_DAY, true)
       }
 
-    }
-  }
+      //TODO: this is NOT efficient, what is the better approach here?
+      val gridAdapter =
+        HourlyConditionsAdapter(picasso, context, dayForecastCondition.forecastConditions)
+      grid.adapter = gridAdapter
 
+    }
+
+  }
 }
+
+

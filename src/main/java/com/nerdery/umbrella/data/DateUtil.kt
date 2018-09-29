@@ -35,7 +35,7 @@ object DateUtil {
   var DATE_PARSE_DISPLAY = "MMM dd, yyyy"
   var DATE_PARSE_M_D_Y = "MM-dd-yyyy"
   var DATE_PARSE_DAY_ONLY = "EEEE"
-  var DATE_PARSE_MONDAY_DAY = "MM/dd"
+  var DATE_PARSE_MONDAY_DAY = "M/d"
   var DATE_PARSE_MONTH_ONLY = "MMMM"
 
   fun getTrendsDefaultRange(): CalendarRange {
