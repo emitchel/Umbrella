@@ -44,9 +44,9 @@ class SettingsActivity : BaseActivity() {
 
       val arrayAdapter =
         ArrayAdapter<String>(this, layout.select_dialog_item)
+      //text color isn't correct
       arrayAdapter.add(FAHRENHEIT.toString(this))
       arrayAdapter.add(CELSIUS.toString(this))
-
       builderSingle.setNegativeButton(
           getString(string.cancel)
       ) { dialog, which -> dialog.dismiss() }
@@ -75,6 +75,7 @@ class SettingsActivity : BaseActivity() {
           LayoutParams.MATCH_PARENT
       )
       input.layoutParams = lp
+      input.setPadding(16, 0, 16, 0)
       val dialog = Builder(this)
           .setTitle(string.zip)
       dialog.setView(input)
