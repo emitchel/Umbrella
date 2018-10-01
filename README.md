@@ -17,3 +17,6 @@ What would I have done if given more time?
 - Use actual settings preferences provided by Android 
 - Fix up alert dialogs used in settings
 - Better handling of error scenarios
+
+Outstanding bugs
+- Last instance of high/low temps are highlights, as opposed to the _first_ instance.
