@@ -19,4 +19,5 @@ What would I have done if given more time?
 - Better handling of error scenarios
 
 Outstanding bugs
-- Last instance of high/low temps are highlights, as opposed to the _first_ instance.
+- Last instance of high/low temps are highlighted, as opposed to the _first_ instance.
+- Weather service's get color for temp isn't considering celsius, need to add the logic (forgot I suppose on first time around)
