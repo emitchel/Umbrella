@@ -7,7 +7,7 @@ Improvements made
 - 90% Kotlin :hands:
 - Better(?) naming conventions
 
-What would I have done if given more time?
+Future improvements
 - Make Home use a "real" action bar (using menus and titles instead of manually inserted layouts)
 - Offline Persistence
 - More animations/transitions
