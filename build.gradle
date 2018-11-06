@@ -6,7 +6,7 @@ buildscript {
     maven { url 'https://oss.jfrog.org/libs-snapshot' }
   }
   dependencies {
-    classpath 'com.android.tools.build:gradle:3.2.0'
+    classpath 'com.android.tools.build:gradle:3.2.1'
     classpath 'com.github.ben-manes:gradle-versions-plugin:0.15.0'
     classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
   }
@@ -34,7 +34,7 @@ ext.darkSkyApiKey = project.hasProperty('com.nerdery.umbrella.darkskyapikey') ?
 
 android {
   compileSdkVersion 27
-  buildToolsVersion '28.0.2'
+  buildToolsVersion '28.0.3'
 
   signingConfigs {
     umbrella {
