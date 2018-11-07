@@ -1,6 +1,7 @@
 package com.nerdery.umbrella
 
 import android.app.Application
+import android.support.multidex.MultiDexApplication
 import android.util.Log
 import com.facebook.stetho.Stetho
 import com.jakewharton.threetenabp.AndroidThreeTen
@@ -11,7 +12,7 @@ import com.nerdery.umbrella.data.services.IZipCodeService
 import timber.log.Timber
 import javax.inject.Inject
 
-class UmbrellaApp : Application() {
+class UmbrellaApp : MultiDexApplication() {
 
   @Inject lateinit var zipCodeService: IZipCodeService
 
